@@ -1,11 +1,15 @@
-"use client"
+"use client";
 import axios from 'axios';
 import Link from 'next/link';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { use, useEffect, useState } from 'react'
 
-const StudentRegistration = () => {
-    const [username, setUsername] = useState('');
+type ProfilePageProps = {
+    params: Promise<{ username: string }>;
+}
+
+const ProfilePage = ({ params }: ProfilePageProps) => {
+
+    const [username_id, setUsername] = useState('');
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [email, setEmail] = useState('');
@@ -33,7 +37,33 @@ const StudentRegistration = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const route = useRouter();
+    const { username } = use(params);
+
+    const [jsonData, setJsonData] = useState(null);
+    useEffect(() => {
+        fetchData();
+    }, []);
+    async function fetchData() {
+        try {
+            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/student/retrieve/" + username);
+            const data = response.data;
+
+            setUsername(data.username || '');
+            setFirstname(data.firstname || '');
+            setLastname(data.lastname || '');
+            setEmail(data.email || '');
+            setPhone(data.phone_number || '');
+            setDob(data.date_of_birth || '');
+            setGender(data.gender || '');
+            setAddress(data.address || '');
+            setProgram(data.program_id ? String(data.program_id) : '');
+            // Do not set password/confirmPassword for security reasons
+            setPassword('');
+            setConfirmPassword('');
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     function validateForm() {
         let valid = true;
@@ -56,7 +86,7 @@ const StudentRegistration = () => {
         const phoneRegex = /^01\d{9}$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-        if (!username.trim()) {
+        if (!username_id.trim()) {
             setUsernameError('Username required.');
             valid = false;
         } else if (!usernameRegex.test(username)) {
@@ -158,7 +188,7 @@ const StudentRegistration = () => {
 
         // Create form data from actual form inputs
         const formData = {
-            username: username,
+            username: username_id,
             fullname: `${firstname} ${lastname}`, // Combine first and last name
             email: email,
             phone_number: phone,
@@ -175,7 +205,6 @@ const StudentRegistration = () => {
                 formData
             );
             alert("Registration successful");
-            route.push('/login');
 
             // Clear form after successful registration
             setUsername('');
@@ -204,7 +233,7 @@ const StudentRegistration = () => {
     return (
         <div className="max-w-6xl mx-auto m-6 flex flex-col items-center py-20 bg-gray-800 border-2 border-black rounded-md">
             <h3 className="text-3xl font-bold mb-8 text-white">
-                Student registration
+                Student Profile
             </h3>
 
             <form
@@ -414,6 +443,6 @@ const StudentRegistration = () => {
             </form>
         </div>
     );
-};
+}
 
-export default StudentRegistration;
+export default ProfilePage
