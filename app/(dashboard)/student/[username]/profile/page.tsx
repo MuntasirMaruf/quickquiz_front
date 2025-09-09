@@ -1,6 +1,6 @@
 "use client";
 import axios from 'axios';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { use, useEffect, useState } from 'react'
 
 type ProfilePageProps = {
@@ -8,7 +8,6 @@ type ProfilePageProps = {
 }
 
 const ProfilePage = ({ params }: ProfilePageProps) => {
-
     const [username_id, setUsername] = useState('');
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
@@ -45,25 +44,31 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
     }, []);
     async function fetchData() {
         try {
-            const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/student/retrieve/" + username);
+            const response = await axios.get(
+                process.env.NEXT_PUBLIC_API_URL + "/student/retrieve/" + username
+            );
             const data = response.data;
 
+            const [firstname, ...rest] = data.fullname.split(" ");
+            const lastname = rest.join(" ");
+
             setUsername(data.username || '');
-            setFirstname(data.firstname || '');
-            setLastname(data.lastname || '');
+            setFirstname(firstname || '');
+            setLastname(lastname || '');
             setEmail(data.email || '');
             setPhone(data.phone_number || '');
-            setDob(data.date_of_birth || '');
+            setDob(data.date_of_birth ? data.date_of_birth.split("T")[0] : '');
             setGender(data.gender || '');
             setAddress(data.address || '');
             setProgram(data.program_id ? String(data.program_id) : '');
-            // Do not set password/confirmPassword for security reasons
+            // Security: don't set passwords from API
             setPassword('');
             setConfirmPassword('');
         } catch (error) {
             console.error(error);
         }
     }
+
 
     function validateForm() {
         let valid = true;
@@ -84,6 +89,7 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
         const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^01\d{9}$/;
+        const nameRegex = /^[a-zA-Z\s]+$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!username_id.trim()) {
@@ -99,10 +105,20 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
         if (!firstname.trim()) {
             setFirstnameError('First name required.');
             valid = false;
+        } else if (!nameRegex.test(firstname)) {
+            setFirstnameError(
+                'Invalid name.'
+            );
+            valid = false;
         }
 
         if (!lastname.trim()) {
             setLastnameError('Last name required.');
+            valid = false;
+        } else if (!nameRegex.test(firstname)) {
+            setLastnameError(
+                'Invalid name.'
+            );
             valid = false;
         }
 
@@ -228,6 +244,12 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                 alert("Something went wrong! Please try again.");
             }
         }
+    };
+
+    const router = useRouter();
+    const handleLogout = async () => {
+        await axios.post('http://localhost:3000/auth/logout', {}, { withCredentials: true });
+        router.push('/login');
     };
 
     return (
@@ -432,13 +454,13 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                     >
                         Register
                     </button>
-                    <Link
-                        href="/login"
+                    <button
+                        onClick={handleLogout}
                         type="button"
-                        className={"px-8 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"}
+                        className={"px-8 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition"}
                     >
-                        Login
-                    </Link>
+                        Logout
+                    </button>
                 </div>
             </form>
         </div>

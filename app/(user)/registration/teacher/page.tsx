@@ -63,6 +63,8 @@ export default function RegistrationPage() {
         // if (!displayPicture) return "Display picture is required.";
 
         return "";
+
+
     };
 
     // 🔎 submit

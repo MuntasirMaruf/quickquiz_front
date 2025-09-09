@@ -17,7 +17,6 @@ const StudentRegistration = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // Error states
     const [usernameError, setUsernameError] = useState('');
     const [firstnameError, setFirstnameError] = useState('');
     const [lastnameError, setLastnameError] = useState('');
@@ -52,8 +51,9 @@ const StudentRegistration = () => {
         setConfirmPasswordError('');
 
         const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^(?=.{1,150}$)[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^01\d{9}$/;
+        const nameRegex = /^(?=.{1,100}$)[a-zA-Z\s]+$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!username.trim()) {
@@ -69,12 +69,23 @@ const StudentRegistration = () => {
         if (!firstname.trim()) {
             setFirstnameError('First name required.');
             valid = false;
+        } else if (!nameRegex.test(firstname)) {
+            setFirstnameError(
+                'Invalid name. Can contain letters and spaces only. Maximum 100 characters.'
+            );
+            valid = false;
         }
 
         if (!lastname.trim()) {
             setLastnameError('Last name required.');
             valid = false;
+        } else if (!nameRegex.test(firstname)) {
+            setLastnameError(
+                'Invalid name. Can contain letters and spaces only. Maximum 100 characters.'
+            );
+            valid = false;
         }
+
 
         if (!email.trim()) {
             setEmailError('Email required.');
@@ -151,6 +162,24 @@ const StudentRegistration = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // async function postData() {
+        //     try {
+        //     }
+        //     const formData = new FormData();
+        //     formData.append('firstName', 'Fred');
+        //     formData.append('lastName', 'Flintstone');
+        //     formData.append('photo', document.querySelector('#fileInput').files[0]);
+        //     const response = await axios.post('http://localhost:3000/post', formData, {
+        //         headers: {
+        //             'Content-Type': 'multipart/form-data'
+        //         }
+        //     });
+        //     const data = response.data;
+        //     console.log(data);
+        // } catch (error) {
+        //     console.error(error);
+
 
         if (!validateForm()) {
             return;
