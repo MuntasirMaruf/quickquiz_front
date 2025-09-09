@@ -1,28 +1,52 @@
 import Link from "next/link";
+
 export default function TeacherDashboard() {
   return (
-    <div>
-      <h1>Teacher Dashboard</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginTop: '20px' }}>
-        <div style={{ border: '1px solid #ccc', padding: '15px' }}>
-          <h2>Students</h2>
-          <p>Manage student information</p>
-          <Link href="/teacher/students">View Students</Link>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Teacher Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div className="border border-gray-300 p-4 rounded-lg shadow-sm">
+          <h2 className="text-lg font-semibold">Students</h2>
+          <p className="text-gray-600">Manage student information</p>
+          <Link
+            href="/teacher/students"
+            className="inline-block mt-3 px-4 py-2 bg-blue-400 text-white rounded-lg "
+          >
+            View Students
+          </Link>
         </div>
-        <div style={{ border: '1px solid #ccc', padding: '15px' }}>
-          <h2>Assignments</h2>
-          <p>Create and grade assignments</p>
-          <Link href="/teacher/add_ssc_question_cq">Add a new question</Link>
+
+        <div className="border border-gray-300 p-4 rounded-lg shadow-sm">
+          <h2 className="text-lg font-semibold">Assignments</h2>
+          <p className="text-gray-600">Create and grade assignments</p>
+          <Link
+            href="/teacher/add_ssc_question_cq"
+           className="inline-block mt-3 px-4 py-2 bg-blue-400 text-white rounded-lg "
+          >
+            Add a new question
+          </Link>
         </div>
-        <div style={{ border: '1px solid #ccc', padding: '15px' }}>
-          <h2>Schedule</h2>
-          <p>View your class schedule</p>
-          <Link href="/teacher/create_exam_ssc">Create Exam</Link>
+
+        <div className="border border-gray-300 p-4 rounded-lg shadow-sm">
+          <h2 className="text-lg font-semibold">Exam</h2>
+          <p className="text-gray-600">View your class exam</p>
+          <Link
+            href="/teacher/create_exam_ssc"
+           className="inline-block mt-3 px-4 py-2 bg-blue-400 text-white rounded-lg "
+          >
+            Create Exam
+          </Link>
         </div>
-        <div style={{ border: '1px solid #ccc', padding: '15px' }}>
-          <h2>Messages</h2>
-          <p>Communicate with students and parents</p>
-          <Link href="/teacher/messages">View Messages</Link>
+
+        <div className="border border-gray-300 p-4 rounded-lg shadow-sm">
+          <h2 className="text-lg font-semibold">Messages</h2>
+          <p className="text-gray-600">Communicate with students and parents</p>
+          <Link
+            href="/teacher/messages"
+            className="inline-block mt-3 px-4 py-2 bg-blue-400 text-white rounded-lg "
+          >
+            View Messages
+          </Link>
         </div>
       </div>
     </div>
