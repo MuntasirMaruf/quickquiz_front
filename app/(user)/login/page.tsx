@@ -6,8 +6,8 @@ import Link from 'next/link';
 
 
 export default function LoginPage() {
-    const [username, setUsername] = useState<string>('akash');
-    const [password, setPassword] = useState<string>('111111');
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
     const router = useRouter();
 
@@ -51,7 +51,7 @@ export default function LoginPage() {
 
                 <button type="submit">LOG IN</button>
                 <br />
-                <p>Don't have an account? <Link href="/register">Register</Link></p>
+                <p>Don't have an account? <Link href="/register">Registration</Link></p>
                 <br />
                 <div>
                     <p>Forgot Password? <Link href="/forgot_password"> Forgot_Password</Link></p>

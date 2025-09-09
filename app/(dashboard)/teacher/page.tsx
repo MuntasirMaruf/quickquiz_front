@@ -12,12 +12,12 @@ export default function TeacherDashboard() {
         <div style={{ border: '1px solid #ccc', padding: '15px' }}>
           <h2>Assignments</h2>
           <p>Create and grade assignments</p>
-          <Link href="/teacher/assignments">View Assignments</Link>
+          <Link href="/teacher/add_ssc_question_cq">Add a new question</Link>
         </div>
         <div style={{ border: '1px solid #ccc', padding: '15px' }}>
           <h2>Schedule</h2>
           <p>View your class schedule</p>
-          <Link href="/teacher/schedule">View Schedule</Link>
+          <Link href="/teacher/create_exam_ssc">Create Exam</Link>
         </div>
         <div style={{ border: '1px solid #ccc', padding: '15px' }}>
           <h2>Messages</h2>
