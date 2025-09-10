@@ -8,14 +8,14 @@ const page = () => {
     const[chapter, setchapter] = useState("");
     const[senario, setsenario] = useState("");
     const[question_1, setquestion_1] = useState("");
-    const[marks_q1, setmarks_q1] = useState("");
+    const[marks_q1, setmarks_q1] = useState(0);
     const[question_2, setquestion_2] = useState("");
-    const[marks_q2, setmarks_q2] = useState("");
+    const[marks_q2, setmarks_q2] = useState(0);
     const[question_3, setquestion_3] = useState("");
-    const[marks_q3, setmarks_q3] = useState("");
+    const[marks_q3, setmarks_q3] = useState(0);
     const[question_4, setquestion_4] = useState("");
-    const[marks_q4, setmarks_q4] = useState("");
-    const[marks_total, setmarks_total] = useState("");
+    const[marks_q4, setmarks_q4] = useState(0);
+    const[marks_total, setmarks_total] = useState(0);
     const[exam_name, setexam_name] = useState("");
     const[institution, setinstitution] = useState("");
     const[year,setyear]= useState("");
@@ -41,11 +41,10 @@ const page = () => {
                 exam_name : exam_name,
                 institution: institution,
                 year: year,
-                status: 1
 
             }
             const res = await axios.post(
-                'http://localhost:3000/exam_question_ssc/create/exam',
+                'http://localhost:3000/exam_question_ssc/create/question',
                 data
             );
             alert("Question  creted");
@@ -111,7 +110,7 @@ const page = () => {
           type="number"
           placeholder="Marks Q1"
           value={marks_q1}
-          onChange={(e) => setmarks_q1(e.target.value)}
+          onChange={(e) => setmarks_q1(e.target.valueAsNumber)}
           className="w-full border p-2 mb-2 rounded"
           required
         />
@@ -129,7 +128,7 @@ const page = () => {
           type="number"
           placeholder="Marks Q2"
           value={marks_q2}
-          onChange={(e) => setmarks_q2(e.target.value)}
+          onChange={(e) => setmarks_q2(e.target.valueAsNumber)}
           className="w-full border p-2 mb-2 rounded"
           required
         />
@@ -147,7 +146,7 @@ const page = () => {
           type="number"
           placeholder="Marks Q3"
           value={marks_q3}
-          onChange={(e) => setmarks_q3(e.target.value)}
+          onChange={(e) => setmarks_q3(e.target.valueAsNumber)}
           className="w-full border p-2 mb-2 rounded"
           required
         />
@@ -165,7 +164,7 @@ const page = () => {
           type="number"
           placeholder="Marks Q4"
           value={marks_q4}
-          onChange={(e) => setmarks_q4(e.target.value)}
+          onChange={(e) => setmarks_q4(e.target.valueAsNumber)}
           className="w-full border p-2 mb-2 rounded"
           required
         />

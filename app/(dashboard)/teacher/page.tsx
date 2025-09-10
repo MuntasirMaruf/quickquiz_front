@@ -5,22 +5,13 @@ export default function TeacherDashboard() {
     <div className="p-6">
       <h1 className="text-2xl font-bold">Teacher Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div className="border border-gray-300 p-4 rounded-lg shadow-sm">
-          <h2 className="text-lg font-semibold">Students</h2>
-          <p className="text-gray-600">Manage student information</p>
-          <Link
-            href="/teacher/students"
-            className="inline-block mt-3 px-4 py-2 bg-blue-400 text-white rounded-lg "
-          >
-            View Students
-          </Link>
-        </div>
+        
 
         <div className="border border-gray-300 p-4 rounded-lg shadow-sm">
           <h2 className="text-lg font-semibold">Assignments</h2>
           <p className="text-gray-600">Create and grade assignments</p>
           <Link
-            href="/teacher/add_ssc_question_cq"
+            href="/teacher/create_assignment"
            className="inline-block mt-3 px-4 py-2 bg-blue-400 text-white rounded-lg "
           >
             Add a new question
@@ -49,10 +40,10 @@ export default function TeacherDashboard() {
         </div>
 
         <div className="border border-gray-300 p-4 rounded-lg shadow-sm">
-          <h2 className="text-lg font-semibold">Messages</h2>
-          <p className="text-gray-600">Communicate with students and parents</p>
+          <h2 className="text-lg font-semibold">Exam Time</h2>
+          <p className="text-gray-600">Exam day</p>
           <Link
-            href="/teacher/messages"
+            href="/teacher/exam_time"
             className="inline-block mt-3 px-4 py-2 bg-blue-400 text-white rounded-lg "
           >
             View Messages
