@@ -53,8 +53,8 @@ export default function LoginPage() {
                 { withCredentials: true } // Include cookies in the request
             );
             if (res.data.student) {
-                alert('Login successful' + res.data.student.fullname);
                 router.push(`/student/${res.data.student.username}/dashboard`);
+                alert('Login successful' + res.data.student.fullname);
             } else {
                 alert(res.data.message);
             }

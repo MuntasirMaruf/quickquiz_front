@@ -16,9 +16,8 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
     const [dob, setDob] = useState('');
     const [gender, setGender] = useState('');
     const [address, setAddress] = useState('');
-    const [program, setProgram] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
 
     // Error states
     const [usernameError, setUsernameError] = useState('');
@@ -29,12 +28,11 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
     const [dobError, setDobError] = useState('');
     const [genderError, setGenderError] = useState('');
     const [addressError, setAddressError] = useState('');
-    const [programError, setProgramError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [newPasswordError, setNewPasswordError] = useState('');
 
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
 
     const { username } = use(params);
 
@@ -60,10 +58,9 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
             setDob(data.date_of_birth ? data.date_of_birth.split("T")[0] : '');
             setGender(data.gender || '');
             setAddress(data.address || '');
-            setProgram(data.program_id ? String(data.program_id) : '');
             // Security: don't set passwords from API
             setPassword('');
-            setConfirmPassword('');
+            setNewPassword('');
         } catch (error) {
             console.error(error);
         }
@@ -82,9 +79,8 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
         setDobError('');
         setGenderError('');
         setAddressError('');
-        setProgramError('');
         setPasswordError('');
-        setConfirmPasswordError('');
+        setNewPasswordError('');
 
         const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -164,33 +160,21 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
             valid = false;
         }
 
-        if (!program) {
-            setProgramError('Please select a program.');
-            valid = false;
-        }
-
         if (!address.trim()) {
             setAddressError('Address required.');
             valid = false;
         }
 
-        if (!password) {
+        if (!newPassword) {
             setPasswordError('Password required.');
             valid = false;
-        } else if (!passwordRegex.test(password)) {
+        } else if (!passwordRegex.test(newPassword)) {
             setPasswordError(
                 'Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a special character.'
             );
             valid = false;
         }
 
-        if (!confirmPassword) {
-            setConfirmPasswordError('Please confirm your password.');
-            valid = false;
-        } else if (password !== confirmPassword) {
-            setConfirmPasswordError('Passwords do not match.');
-            valid = false;
-        }
 
         return valid;
     }
@@ -212,7 +196,6 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
             gender: gender,
             address: address,
             password: password,
-            enrolled_program: parseInt(program), // Ensure it's a number
         };
 
         try {
@@ -231,9 +214,7 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
             setDob('');
             setGender('');
             setAddress('');
-            setProgram('');
             setPassword('');
-            setConfirmPassword('');
 
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -389,29 +370,12 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                 />
                 {addressError && <p className="text-red-500">{addressError}</p>}
 
-                <div className="w-full mx-auto">
-                    <select
-                        name="program"
-                        id="program"
-                        value={program}
-                        onChange={(e) => setProgram(e.target.value)}
-                        className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-                    >
-                        <option value="" disabled>Select Program</option>
-                        <option value="1">SSC Preparation</option>
-                        <option value="2">HSC Preparation</option>
-                        <option value="3">Engineering Preparation</option>
-                        <option value="4">Medical Preparation</option>
-                    </select>
-                </div>
-                {programError && <p className="text-red-500">{programError}</p>}
-
                 <div className="flex justify-center space-x-1">
                     <input
                         id="password"
                         name="password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Create a new password"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -428,24 +392,24 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
 
                 <div className="flex justify-center space-x-1">
                     <input
-                        id="confirm_password"
-                        name="confirm_password"
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Retype the password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        id="new_password"
+                        name="new_password"
+                        type={showNewPassword ? "text" : "password"}
+                        placeholder="New Password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
                         className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
                     <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() => setShowNewPassword(!showNewPassword)}
                         className="right-3  text-gray-400 hover:text-white"
                     >
-                        {showConfirmPassword ? "Hide" : "Show"}
+                        {showNewPassword ? "Hide" : "Show"}
                     </button>
                 </div>
-                {confirmPasswordError && <p className="text-red-500">{confirmPasswordError}</p>}
+                {newPasswordError && <p className="text-red-500">{newPasswordError}</p>}
 
                 <div className="flex justify-center space-x-20 mt-4">
                     <button
