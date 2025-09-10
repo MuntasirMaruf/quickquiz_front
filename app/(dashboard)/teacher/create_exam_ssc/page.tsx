@@ -9,6 +9,8 @@ const page = () => {
     const[marks, setMarks] = useState("");
     const[duration, setDuration] = useState("");
     const[date, setDate] = useState("");
+    const [time, setTime] = useState("");
+
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -19,7 +21,7 @@ const page = () => {
                 subject: subject,
                 marks: marks,
                 duration: duration,
-                date: date,
+                date: `${date}T${time}`,
                 status: 1
 
             }
@@ -101,6 +103,16 @@ const page = () => {
                     className="w-full border p-2 mb-2"
                     required
                 />
+                
+                <input
+                   type="time"
+                   name="time"
+                   value={time}
+                   onChange={(e) => setTime(e.target.value)}
+                   className="w-full border p-2 mb-2"
+                   required
+                 />
+                
 
                 <button
                     className="w-full border p-2 mt-2 rounded bg-blue-500 text-white"
