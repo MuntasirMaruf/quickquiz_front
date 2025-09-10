@@ -1,11 +1,14 @@
-"use client"
+"use client";
 import axios from 'axios';
-import Link from 'next/link';
-import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import React, { use, useEffect, useState } from 'react'
 
-const StudentRegistration = () => {
-    const [username, setUsername] = useState('');
+type ProfilePageProps = {
+    params: Promise<{ username: string }>;
+}
+
+const ProfilePage = ({ params }: ProfilePageProps) => {
+    const [username_id, setUsername] = useState('');
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [email, setEmail] = useState('');
@@ -13,10 +16,10 @@ const StudentRegistration = () => {
     const [dob, setDob] = useState('');
     const [gender, setGender] = useState('');
     const [address, setAddress] = useState('');
-    const [program, setProgram] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
 
+    // Error states
     const [usernameError, setUsernameError] = useState('');
     const [firstnameError, setFirstnameError] = useState('');
     const [lastnameError, setLastnameError] = useState('');
@@ -25,14 +28,44 @@ const StudentRegistration = () => {
     const [dobError, setDobError] = useState('');
     const [genderError, setGenderError] = useState('');
     const [addressError, setAddressError] = useState('');
-    const [programError, setProgramError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [newPasswordError, setNewPasswordError] = useState('');
 
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
 
-    const route = useRouter();
+    const { username } = use(params);
+
+    const [jsonData, setJsonData] = useState(null);
+    useEffect(() => {
+        fetchData();
+    }, []);
+    async function fetchData() {
+        try {
+            const response = await axios.get(
+                process.env.NEXT_PUBLIC_API_URL + "/student/retrieve/" + username
+            );
+            const data = response.data;
+
+            const [firstname, ...rest] = data.fullname.split(" ");
+            const lastname = rest.join(" ");
+
+            setUsername(data.username || '');
+            setFirstname(firstname || '');
+            setLastname(lastname || '');
+            setEmail(data.email || '');
+            setPhone(data.phone_number || '');
+            setDob(data.date_of_birth ? data.date_of_birth.split("T")[0] : '');
+            setGender(data.gender || '');
+            setAddress(data.address || '');
+            // Security: don't set passwords from API
+            setPassword('');
+            setNewPassword('');
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 
     function validateForm() {
         let valid = true;
@@ -46,17 +79,16 @@ const StudentRegistration = () => {
         setDobError('');
         setGenderError('');
         setAddressError('');
-        setProgramError('');
         setPasswordError('');
-        setConfirmPasswordError('');
+        setNewPasswordError('');
 
         const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-        const emailRegex = /^(?=.{1,150}$)[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^01\d{9}$/;
-        const nameRegex = /^(?=.{1,100}$)[a-zA-Z\s]+$/;
+        const nameRegex = /^[a-zA-Z\s]+$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-        if (!username.trim()) {
+        if (!username_id.trim()) {
             setUsernameError('Username required.');
             valid = false;
         } else if (!usernameRegex.test(username)) {
@@ -71,7 +103,7 @@ const StudentRegistration = () => {
             valid = false;
         } else if (!nameRegex.test(firstname)) {
             setFirstnameError(
-                'Invalid name. Can contain letters and spaces only. Maximum 100 characters.'
+                'Invalid name.'
             );
             valid = false;
         }
@@ -81,11 +113,10 @@ const StudentRegistration = () => {
             valid = false;
         } else if (!nameRegex.test(firstname)) {
             setLastnameError(
-                'Invalid name. Can contain letters and spaces only. Maximum 100 characters.'
+                'Invalid name.'
             );
             valid = false;
         }
-
 
         if (!email.trim()) {
             setEmailError('Email required.');
@@ -129,33 +160,21 @@ const StudentRegistration = () => {
             valid = false;
         }
 
-        if (!program) {
-            setProgramError('Please select a program.');
-            valid = false;
-        }
-
         if (!address.trim()) {
             setAddressError('Address required.');
             valid = false;
         }
 
-        if (!password) {
+        if (!newPassword) {
             setPasswordError('Password required.');
             valid = false;
-        } else if (!passwordRegex.test(password)) {
+        } else if (!passwordRegex.test(newPassword)) {
             setPasswordError(
                 'Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a special character.'
             );
             valid = false;
         }
 
-        if (!confirmPassword) {
-            setConfirmPasswordError('Please confirm your password.');
-            valid = false;
-        } else if (password !== confirmPassword) {
-            setConfirmPasswordError('Passwords do not match.');
-            valid = false;
-        }
 
         return valid;
     }
@@ -163,31 +182,13 @@ const StudentRegistration = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // async function postData() {
-        //     try {
-        //     }
-        //     const formData = new FormData();
-        //     formData.append('firstName', 'Fred');
-        //     formData.append('lastName', 'Flintstone');
-        //     formData.append('photo', document.querySelector('#fileInput').files[0]);
-        //     const response = await axios.post('http://localhost:3000/post', formData, {
-        //         headers: {
-        //             'Content-Type': 'multipart/form-data'
-        //         }
-        //     });
-        //     const data = response.data;
-        //     console.log(data);
-        // } catch (error) {
-        //     console.error(error);
-
-
         if (!validateForm()) {
             return;
         }
 
         // Create form data from actual form inputs
         const formData = {
-            username: username,
+            username: username_id,
             fullname: `${firstname} ${lastname}`, // Combine first and last name
             email: email,
             phone_number: phone,
@@ -195,7 +196,6 @@ const StudentRegistration = () => {
             gender: gender,
             address: address,
             password: password,
-            enrolled_program: parseInt(program), // Ensure it's a number
         };
 
         try {
@@ -204,7 +204,6 @@ const StudentRegistration = () => {
                 formData
             );
             alert("Registration successful");
-            route.push('/login');
 
             // Clear form after successful registration
             setUsername('');
@@ -215,9 +214,7 @@ const StudentRegistration = () => {
             setDob('');
             setGender('');
             setAddress('');
-            setProgram('');
             setPassword('');
-            setConfirmPassword('');
 
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -230,10 +227,16 @@ const StudentRegistration = () => {
         }
     };
 
+    const router = useRouter();
+    const handleLogout = async () => {
+        await axios.post('http://localhost:3000/auth/logout', {}, { withCredentials: true });
+        router.push('/login');
+    };
+
     return (
         <div className="max-w-6xl mx-auto m-6 flex flex-col items-center py-20 bg-gray-800 border-2 border-black rounded-md">
             <h3 className="text-3xl font-bold mb-8 text-white">
-                Student registration
+                Student Profile
             </h3>
 
             <form
@@ -367,29 +370,12 @@ const StudentRegistration = () => {
                 />
                 {addressError && <p className="text-red-500">{addressError}</p>}
 
-                <div className="w-full mx-auto">
-                    <select
-                        name="program"
-                        id="program"
-                        value={program}
-                        onChange={(e) => setProgram(e.target.value)}
-                        className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-                    >
-                        <option value="" disabled>Select Program</option>
-                        <option value="1">SSC Preparation</option>
-                        <option value="2">HSC Preparation</option>
-                        <option value="3">Engineering Preparation</option>
-                        <option value="4">Medical Preparation</option>
-                    </select>
-                </div>
-                {programError && <p className="text-red-500">{programError}</p>}
-
                 <div className="flex justify-center space-x-1">
                     <input
                         id="password"
                         name="password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Create a new password"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -406,24 +392,24 @@ const StudentRegistration = () => {
 
                 <div className="flex justify-center space-x-1">
                     <input
-                        id="confirm_password"
-                        name="confirm_password"
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Retype the password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        id="new_password"
+                        name="new_password"
+                        type={showNewPassword ? "text" : "password"}
+                        placeholder="New Password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
                         className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
                     <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() => setShowNewPassword(!showNewPassword)}
                         className="right-3  text-gray-400 hover:text-white"
                     >
-                        {showConfirmPassword ? "Hide" : "Show"}
+                        {showNewPassword ? "Hide" : "Show"}
                     </button>
                 </div>
-                {confirmPasswordError && <p className="text-red-500">{confirmPasswordError}</p>}
+                {newPasswordError && <p className="text-red-500">{newPasswordError}</p>}
 
                 <div className="flex justify-center space-x-20 mt-4">
                     <button
@@ -432,17 +418,17 @@ const StudentRegistration = () => {
                     >
                         Register
                     </button>
-                    <Link
-                        href="/login"
+                    <button
+                        onClick={handleLogout}
                         type="button"
-                        className={"px-8 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"}
+                        className={"px-8 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition"}
                     >
-                        Login
-                    </Link>
+                        Logout
+                    </button>
                 </div>
             </form>
         </div>
     );
-};
+}
 
-export default StudentRegistration;
+export default ProfilePage
