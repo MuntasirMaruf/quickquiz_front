@@ -52,7 +52,7 @@ export default function SideBarStudent() {
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
                 {isOpen && (
                     <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        QuicQuiz
+                        {username}
                     </h2>
                 )}
                 <button
