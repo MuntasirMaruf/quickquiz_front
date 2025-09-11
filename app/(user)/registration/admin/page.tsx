@@ -1,9 +1,14 @@
 "use client"
 import axios from 'axios';
 import Link from 'next/link';
+import router, { useRouter } from 'next//navigation';
 import React, { useState, useEffect } from 'react';
 
 const AdminRegistration = () => {
+
+    const router = useRouter();
+
+
     const [username, setUsername] = useState('');
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
@@ -20,17 +25,17 @@ const AdminRegistration = () => {
     const timer = setTimeout(async () => {
         try {
             if (username) {
-                const resUsername = await axios.post('http://localhost:7000/admin/check-username', { username });
+                const resUsername = await axios.post('http://localhost:3000/admin/check-username', { username });
                 setUsernameError(resUsername.data.exists ? 'Username already exists.' : '');
             }
 
             if (email) {
-                const resEmail = await axios.post('http://localhost:7000/admin/check-email', { email });
+                const resEmail = await axios.post('http://localhost:3000/admin/check-email', { email });
                 setEmailError(resEmail.data.exists ? 'Email already exists.' : '');
             }
 
             if (phone) {
-                const resPhone = await axios.post('http://localhost:7000/admin/check-phone', { phone_number: phone });
+                const resPhone = await axios.post('http://localhost:3000/admin/check-phone', { phone_number: phone });
                 setPhoneError(resPhone.data.exists ? 'Phone number already exists.' : '');
             }
         } catch (error) {
@@ -199,6 +204,7 @@ const AdminRegistration = () => {
         );
 
         alert("Registration successful!");
+        router.push("/login/admin");
 
         // Clear form
         setUsername('');
@@ -371,17 +377,17 @@ const AdminRegistration = () => {
     <label htmlFor="profilePic" className="text-gray-400 mb-1">
         Profile Picture (optional)
     </label>
-    <input
-  id="profilePic"
-  name="profilePic"      // <-- this is the important part
-  type="file"
-  accept="image/*"
-  onChange={(e) => {
-      if (e.target.files && e.target.files[0]) {
+        <input
+          id="profilePic"
+          name="profilePic"      // <-- this is the important part
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+          if (e.target.files && e.target.files[0]) {
           setProfilePic(e.target.files[0]);
-      }
-  }}
-/>
+        }
+    }}
+    />
     {profilePicError && <p className="text-red-500">{profilePicError}</p>}
 </div>
 
@@ -436,7 +442,7 @@ const AdminRegistration = () => {
                         Register
                     </button>
                     <Link
-                        href="/login"
+                        href="/login/admin"
                         type="button"
                         className={"px-8 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"}
                     >
