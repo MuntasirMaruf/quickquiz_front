@@ -45,6 +45,7 @@ const page = () => {
 
   return (
      <div className="max-w-md mx-auto mt-6 border p-4 rounded">
+        <h1 className="text-xl font-semibold mb-4">Create Exam </h1>
             <form onSubmit={handleSubmit}>
                 {/* Dropdown for category */}
                 <select

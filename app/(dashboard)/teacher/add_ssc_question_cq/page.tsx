@@ -63,7 +63,7 @@ const page = () => {
 
   return (
       <div className="max-w-3xl mx-auto mt-8 bg-white shadow rounded-2xl p-6">
-      <h1 className="text-xl font-semibold mb-4">Create Exam </h1>
+      <h1 className="text-xl font-semibold mb-4">Create Exam ssc </h1>
 
       <form onSubmit={handleSubmit}>
         <select
