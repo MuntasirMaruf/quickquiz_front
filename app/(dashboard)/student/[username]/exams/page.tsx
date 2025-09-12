@@ -58,10 +58,10 @@ const ExamsPage = ({ params }: PageProps) => {
                         <p><span className="text-gray-400">Marks:</span> {item.marks}</p>
 
                         <p><span className="text-gray-400">Name:</span> {item.name}</p>
-                        <p><span className="text-gray-400">Duration:</span> {item.duration}</p>
+                        <p><span className="text-gray-400">Duration:</span> {item.duration} Minutes</p>
 
                         <p><span className="text-gray-400">Category:</span> {item.category}</p>
-                        <p><span className="text-gray-400">Date:</span> {item.date}</p>
+                        <p><span className="text-gray-400">Date:</span> {item.date.split("T")[0]}</p>
 
                         <p><span className="text-gray-400">Subject:</span> {item.subject}</p>
                         <p>

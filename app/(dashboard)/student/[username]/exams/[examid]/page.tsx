@@ -176,7 +176,7 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                         <p><span className="font-semibold text-gray-300">Category:</span> {exam?.category}</p>
                         <p><span className="font-semibold text-gray-300">Subject:</span> {exam?.subject}</p>
                         <p><span className="font-semibold text-gray-300">Marks:</span> {exam?.marks}</p>
-                        <p><span className="font-semibold text-gray-300">Duration:</span> {exam?.duration}</p>
+                        <p><span className="font-semibold text-gray-300">Duration:</span> {exam?.duration} Minutes</p>
                     </div>
 
                     <Link
