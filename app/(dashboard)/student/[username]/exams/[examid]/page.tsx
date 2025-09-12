@@ -1,18 +1,19 @@
 "use client";
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type PageProps = {
-    params: Promise<{ examid: string }>;
+    params: Promise<{ username: string; examid: string }>;
 };
 
-type ItemEQ = {
+type ExamQuestionItem = {
     exam_ssc: { id: number };
     question_cq_ssc: { id: number }
 };
 
-type ItemE = {
+type ExamItem = {
     id: number | string;
     name: string;
     category: string;
@@ -23,7 +24,7 @@ type ItemE = {
     status: { id: number };
 };
 
-type ItemQ = {
+type QuestionItem = {
     id: number | string;
     subject: string;
     chapter: string;
@@ -43,14 +44,14 @@ type ItemQ = {
     status: { id: number };
 };
 
-const TakeExamPage = ({ params }: PageProps) => {
-    const { examid } = React.use(params); // unwrap the promise
+const ExamDetailsPage = ({ params }: PageProps) => {
+    const { username, examid } = React.use(params);
     const router = useRouter();
 
 
-    const [jsonDataEQ, setJsonDataEQ] = useState<ItemEQ[] | null>(null);
-    const [questions, setQuestions] = useState<ItemQ[]>([]);
-    const [exam, setExam] = useState<ItemE>()
+    const [examQuestions, setexamQuestions] = useState<ExamQuestionItem[] | null>(null);
+    const [questions, setQuestions] = useState<QuestionItem[]>([]);
+    const [exam, setExam] = useState<ExamItem>()
 
     useEffect(() => {
         fetchExamQuestions();
@@ -61,14 +62,14 @@ const TakeExamPage = ({ params }: PageProps) => {
             const response = await axios.get(
                 `${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/all/exam_questions`
             );
-            const data: ItemEQ[] = response.data;
+            const data: ExamQuestionItem[] = response.data;
 
             // Filter by examid
             const filteredData = data.filter(
                 (item) => String(item.exam_ssc.id) === String(examid)
             );
 
-            setJsonDataEQ(filteredData);
+            setexamQuestions(filteredData);
 
             // Fetch all detailed questions
             fetchQuestionsDetails(filteredData.map(d => d.question_cq_ssc.id));
@@ -83,7 +84,7 @@ const TakeExamPage = ({ params }: PageProps) => {
             const response = await axios.get(
                 `${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/get/exam/${id}`
             );
-            const data: ItemE = response.data;
+            const data: ExamItem = response.data;
             setExam(data)
 
         } catch (error) {
@@ -99,63 +100,106 @@ const TakeExamPage = ({ params }: PageProps) => {
                 )
             );
 
-            const dataQ: ItemQ[] = responses.map(res => res.data);
+            const dataQ: QuestionItem[] = responses.map(res => res.data);
             setQuestions(dataQ);
         } catch (error) {
             console.error(error);
         }
     }
 
-    const printArray = (questions: ItemQ[]) => {
+    const printArray = (questions: QuestionItem[]) => {
         return questions.map((item, index) => (
             <div
                 key={index}
-                className="mb-4 p-6 bg-gray-700 rounded-xl shadow-lg text-white flex justify-between"
+                className="mb-6 p-6 bg-gray-700 rounded-2xl shadow-xl text-white"
             >
+                {/* Question Header */}
+                <div className="flex justify-between items-center bg-gray-900 rounded-xl p-3 mb-4">
+                    <p className="font-semibold text-lg">Question {index + 1}</p>
+                    <p className="text-gray-300 font-medium">Total Marks: {item.marks_total}</p>
+                </div>
 
-                <div className="flex flex-col space-y-2 w-full">
-                    <div className="flex justify-between bg-gray-900 rounded-xl p-2">
-                        <p>Quesion: {index + 1}</p>
-                        <p>Total Marks: {item.marks_total}</p>
-
-                    </div>
-                    <p>Scenario: {item.senario}</p>
-                    <p>Question 1: {item.question_1} ({item.marks_q1} marks)</p>
-                    <p>Question 2: {item.question_2} ({item.marks_q2} marks)</p>
-                    <p>Question 3: {item.question_3} ({item.marks_q3} marks)</p>
-                    <p>Question 4: {item.question_4} ({item.marks_q4} marks)</p>
+                {/* Question Details */}
+                <div className="flex flex-col space-y-3 text-gray-100">
+                    {item.senario && (
+                        <p>
+                            <span className="font-semibold text-gray-300">Scenario:</span> {item.senario}
+                        </p>
+                    )}
+                    {item.question_1 && (
+                        <p>
+                            <span className="font-semibold text-gray-300">Q1:</span> {item.question_1}{" "}
+                            <span className="text-gray-400">({item.marks_q1} marks)</span>
+                        </p>
+                    )}
+                    {item.question_2 && (
+                        <p>
+                            <span className="font-semibold text-gray-300">Q2:</span> {item.question_2}{" "}
+                            <span className="text-gray-400">({item.marks_q2} marks)</span>
+                        </p>
+                    )}
+                    {item.question_3 && (
+                        <p>
+                            <span className="font-semibold text-gray-300">Q3:</span> {item.question_3}{" "}
+                            <span className="text-gray-400">({item.marks_q3} marks)</span>
+                        </p>
+                    )}
+                    {item.question_4 && (
+                        <p>
+                            <span className="font-semibold text-gray-300">Q4:</span> {item.question_4}{" "}
+                            <span className="text-gray-400">({item.marks_q4} marks)</span>
+                        </p>
+                    )}
                 </div>
             </div>
         ));
+
     };
 
     return (
-        <div className="flex p-4 bg-gray-100 w-full">
-            <div className="max-w-10xl mx-auto w-full">
-                <div className="bg-gray-900 rounded-lg shadow-lg mb-6 flex items-center justify-between p-6">
+        <div className="flex justify-center bg-gray-100 min-h-screen p-4">
+            <div className="w-full max-w-10xl space-y-6">
+
+                {/* Header Section */}
+                <div className="bg-gray-800 text-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <button
                         onClick={() => router.back()}
-                        className="flex items-center px-3 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                        className="flex items-center px-4 py-2 bg-green-700 rounded-lg hover:bg-gray-700 transition-colors"
                     >
                         Back
                     </button>
-                    <p className="text-white text-2xl font-bold">Take Exams: {examid}</p>
-                </div>
-                <div className="bg-white rounded-lg shadow-lg p-8 max-h-[70vh] overflow-y-auto">
-                    <div className="bg-gray-900 rounded-lg shadow-lg mb-6 flex items-center justify-between p-6">
-                        <p><span className="text-gray-300">Name:</span> {exam?.name}</p>
-                        <p><span className="text-gray-300">Category:</span> {exam?.category}</p>
-                        <p><span className="text-gray-300">Subject:</span> {exam?.subject}</p>
-                        <p><span className="text-gray-300">Marks:</span> {exam?.marks}</p>
-                        <p><span className="text-gray-300">Duration:</span> {exam?.duration}</p>
+
+                    {/* Exam Info */}
+                    <div className="bg-gray-900 rounded-lg shadow-inner px-4 py-2 flex flex-wrap gap-6 justify-between flex-1">
+                        <p><span className="font-semibold text-gray-300">Id:</span> {examid}</p>
+                        <p><span className="font-semibold text-gray-300">Name:</span> {exam?.name}</p>
+                        <p><span className="font-semibold text-gray-300">Category:</span> {exam?.category}</p>
+                        <p><span className="font-semibold text-gray-300">Subject:</span> {exam?.subject}</p>
+                        <p><span className="font-semibold text-gray-300">Marks:</span> {exam?.marks}</p>
+                        <p><span className="font-semibold text-gray-300">Duration:</span> {exam?.duration} Minutes</p>
                     </div>
-                    {questions.length > 0
-                        ? printArray(questions)
-                        : <p className="text-gray-500">No questions found for this exam.</p>}
+
+                    <Link
+                        href={`/student/${username}/exams/${examid}/start`}
+                        className="flex items-center px-4 py-2 bg-blue-700 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                        Start
+                    </Link>
                 </div>
+
+                {/* Questions Section */}
+                <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-h-[78vh] overflow-y-auto">
+                    {questions.length > 0 ? (
+                        printArray(questions)
+                    ) : (
+                        <p className="text-gray-500 text-center italic">No questions found for this exam.</p>
+                    )}
+                </div>
+
             </div>
         </div>
     );
+
 };
 
-export default TakeExamPage;
+export default ExamDetailsPage;
