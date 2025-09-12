@@ -6,8 +6,8 @@ import Link from 'next/link';
 
 
 export default function LoginPage() {
-    const [username, setUsername] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+    const [username, setUsername] = useState<string>('user');
+    const [password, setPassword] = useState<string>('afjdsljfdolsj123');
     const [error, setError] = useState<string>('');
     const router = useRouter();
 
@@ -25,7 +25,7 @@ export default function LoginPage() {
 
         console.log('Login attempt:', { username, password });
 
-        router.push('/teacher');
+        router.push('/teacher/'+username);
     };
 
     return (
@@ -49,7 +49,7 @@ export default function LoginPage() {
                 />
                 <br />
 
-                <button type="submit">LOG IN</button>
+                <button className="bg-blue-700" type="submit">LOG IN</button>
                 <br />
                 <p>Don't have an account? <Link href="/register">Registration</Link></p>
                 <br />
