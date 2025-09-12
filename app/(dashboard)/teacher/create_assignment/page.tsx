@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import Button from "@/app/components/teacher/Button";
 
 export default function CreateAssignment() {
   const [title, setTitle] = useState("");
@@ -169,22 +170,24 @@ export default function CreateAssignment() {
                 </button>
               </div>
             ))}
-
+{/* 
             <button
               type="button"
               onClick={addQuestion}
               className="rounded bg-blue-600 px-4 py-2 text-white"
             >
               Add question
-            </button>
+            </button> */}
+             <Button type="submit"> Add question</Button>
           </div>
-
+{/* 
           <button
             type="submit"
             className="w-full rounded bg-green-600 px-4 py-2 font-semibold text-white disabled:opacity-60"
           >Create Assignment
             
-          </button>
+          </button> */}
+           <Button type="submit">Create Assignment</Button>
         </form>
       </div>
     </div>

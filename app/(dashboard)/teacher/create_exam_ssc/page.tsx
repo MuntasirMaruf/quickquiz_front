@@ -1,4 +1,5 @@
 'use client'
+import Button from '@/app/components/teacher/Button';
 import axios from 'axios';
 import React, { useState } from 'react'
 
@@ -113,14 +114,7 @@ const page = () => {
                    className="w-full border p-2 mb-2"
                    required
                  />
-                
-
-                <button
-                    className="w-full border p-2 mt-2 rounded bg-blue-500 text-white"
-                    type="submit"
-                >
-                    Register
-                </button>
+              <Button type="submit"> Register</Button>
             </form>
         </div>
   )
