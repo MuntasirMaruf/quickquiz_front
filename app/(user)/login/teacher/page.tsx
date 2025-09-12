@@ -25,7 +25,7 @@ export default function LoginPage() {
 
         console.log('Login attempt:', { username, password });
 
-        router.push('/teacher');
+        router.push('/teacher/'+username);
     };
 
     return (
