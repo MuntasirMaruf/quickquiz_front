@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Button from "@/app/components/teacher/Button";
 
-export default function RegistrationPage() {
+
+type ProfilePageProps = {
+    params: { username: string };
+}
+
+export default function Page() {
     const router = useRouter();
 
     // individual fields
@@ -208,6 +213,7 @@ export default function RegistrationPage() {
                 />
 
                 <Button type="submit">Register</Button>
+                <Button type="submit">Update</Button>
 
             </form>
         </div>
