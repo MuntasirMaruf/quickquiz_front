@@ -22,6 +22,7 @@ type ExamItem = {
     duration: string;
     date: string;
     status: { id: number };
+    isExpired: boolean;
 };
 
 type QuestionItem = {
@@ -79,18 +80,31 @@ const ExamDetailsPage = ({ params }: PageProps) => {
         }
     }
 
-    async function fetchExam(id: (string | number)) {
+    async function fetchExam(id: string | number) {
         try {
             const response = await axios.get(
                 `${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/get/exam/${id}`
             );
-            const data: ExamItem = response.data;
-            setExam(data)
 
+            const exam = response.data; // ✅ single object
+            // Parse the time string (e.g., "10:30 AM")
+            const [timePart, meridiem] = exam.time.split(" ");
+            let [hours, minutes] = timePart.split(":").map(Number);
+
+            if (meridiem.toUpperCase() === "PM" && hours !== 12) hours += 12;
+            if (meridiem.toUpperCase() === "AM" && hours === 12) hours = 0;
+
+            const examDateTime = new Date(exam.date);
+            examDateTime.setHours(hours, minutes, 0, 0);
+
+            exam.isExpired = new Date() > examDateTime;
+
+            setExam(exam); // ✅ directly set single object
         } catch (error) {
             console.error(error);
         }
     }
+
 
     async function fetchQuestionsDetails(questionIds: (string | number)[]) {
         try {
@@ -179,12 +193,22 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                         <p><span className="font-semibold text-gray-300">Duration:</span> {exam?.duration} Minutes</p>
                     </div>
 
-                    <Link
-                        href={`/student/${username}/exams/${examid}/start`}
-                        className="flex items-center px-4 py-2 bg-blue-700 rounded-lg hover:bg-gray-700 transition-colors"
-                    >
-                        Start
-                    </Link>
+                    {exam?.isExpired ? (
+                        <button
+                            disabled
+                            className="bg-red-500 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed"
+                        >
+                            Expired
+                        </button>
+                    ) : (
+                        <Link
+                            href={`/student/${username}/exams/${examid}/start`}
+                            className="flex items-center px-4 py-2 bg-blue-700 rounded-lg hover:bg-gray-700 transition-colors"
+                        >
+                            Start
+                        </Link>
+                    )}
+
                 </div>
 
                 {/* Questions Section */}

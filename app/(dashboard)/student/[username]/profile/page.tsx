@@ -218,7 +218,7 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                 formData,
                 { withCredentials: true }
             );
-            alert("Profile updated successful");
+            alert("Profile updated successfully");
 
             setPassword('');
 
@@ -240,7 +240,6 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
     };
 
 
-    // Right Section – Updated Profile Picture Upload
 
     const handleUpdatePicture = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -272,9 +271,8 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
 
     return (
         <div className="flex gap-6 p-4 bg-gray-100 w-full h-full">
-            {/* Left Section */}
             <div className="flex-1 bg-gray-800 rounded-lg shadow-lg mb-6 flex items-center justify-center p-6">
-                <div className="w-full max-w-3xl flex flex-col items-center bg-gray-800 border-2 border-black rounded-md p-8">
+                <div className="w-full max-w-3xl flex flex-col items-center bg-gray-800 border-2 border-black rounded-md p-10">
                     <h3 className="text-3xl font-bold mb-8 text-white">
                         Student Profile
                     </h3>
@@ -349,7 +347,6 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                         />
                         {dobError && <p className="text-red-500">{dobError}</p>}
 
-                        {/* Gender Section */}
                         <div className="flex space-x-3 w-full">
                             <p className="text-gray-400 font-semibold">Gender:</p>
 
@@ -450,7 +447,6 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                 </div>
             </div>
 
-            {/* Right Section */}
             <div className="flex-1 bg-gray-800 rounded-lg shadow-lg mb-6 flex items-center justify-center p-6">
                 <div className="w-full max-w-md flex flex-col items-center bg-gray-800 border-2 border-black rounded-md p-6">
                     <h3 className="text-2xl font-bold mb-6 text-white">Update Profile Picture</h3>
@@ -460,28 +456,27 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                         className="flex flex-col items-center w-full space-y-4"
                         encType="multipart/form-data"
                     >
-                        {/* Preview */}
+
                         <div className="mb-4">
                             {preview ? (
                                 <img
                                     src={preview}
                                     alt="Preview"
-                                    className="w-32 h-32 object-cover rounded-full border-2 border-gray-600"
+                                    className="w-64 h-64 object-cover rounded-full border-2 border-gray-600"
                                 />
                             ) : profilePic ? (
                                 <img
                                     src={profilePic}
                                     alt="Profile"
-                                    className="w-32 h-32 object-cover rounded-full border-2 border-gray-600"
+                                    className="w-64 h-64 object-cover rounded-full border-2 border-gray-600"
                                 />
                             ) : (
-                                <div className="w-32 h-32 bg-gray-700 rounded-full flex items-center justify-center text-gray-400">
+                                <div className="w-64 h-64 bg-gray-700 rounded-full flex items-center justify-center text-gray-400">
                                     No Image
                                 </div>
                             )}
                         </div>
 
-                        {/* File Input */}
                         <input
                             type="file"
                             accept="image/*"
@@ -493,7 +488,7 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                             className="w-full text-white file:bg-blue-600 file:text-white file:px-4 file:py-2 file:rounded-lg file:border-none file:cursor-pointer focus:outline-none"
                         />
 
-                        {/* Submit Button */}
+
                         <button
                             type="submit"
                             className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
@@ -504,181 +499,6 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                 </div>
             </div>
         </div>
-
-
-        // <div className="max-w-10xl mx-auto m-6 flex flex-col items-center py-20 bg-gray-800 border-2 border-black rounded-md">
-        //     <h3 className="text-3xl font-bold mb-8 text-white">
-        //         Student Profile
-        //     </h3>
-
-        //     <form
-        //         className="flex flex-col space-y-4 w-full max-w-lg px-4 sm:px-6 md:px-0"
-        //         onSubmit={handleSubmit}
-        //         noValidate
-        //     >
-        //         <input
-        //             id="username"
-        //             name="username"
-        //             type="text"
-        //             placeholder="Enter your username"
-        //             value={username}
-        //             onChange={(e) => setUsername(e.target.value)}
-        //             className="px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //         />
-        //         {usernameError && <p className="text-red-500">{usernameError}</p>}
-
-        //         <input
-        //             id="firstname"
-        //             name="firstname"
-        //             type="text"
-        //             placeholder="Enter your First Name"
-        //             value={firstname}
-        //             onChange={(e) => setFirstname(e.target.value)}
-        //             className="px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //         />
-        //         {firstnameError && <p className="text-red-500">{firstnameError}</p>}
-
-        //         <input
-        //             id="lastname"
-        //             name="lastname"
-        //             type="text"
-        //             placeholder="Enter your Last Name"
-        //             value={lastname}
-        //             onChange={(e) => setLastname(e.target.value)}
-        //             className="px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //         />
-        //         {lastnameError && <p className="text-red-500">{lastnameError}</p>}
-
-        //         <input
-        //             id="email"
-        //             name="email"
-        //             type="email"
-        //             placeholder="Enter your Email"
-        //             value={email}
-        //             onChange={(e) => setEmail(e.target.value)}
-        //             className="px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //         />
-        //         {emailError && <p className="text-red-500">{emailError}</p>}
-
-        //         <input
-        //             id="phone"
-        //             name="phone"
-        //             type="tel"
-        //             placeholder="Enter your Phone Number"
-        //             value={phone}
-        //             onChange={(e) => setPhone(e.target.value)}
-        //             className="px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //         />
-        //         {phoneError && <p className="text-red-500">{phoneError}</p>}
-
-        //         <input
-        //             id="dob"
-        //             name="dob"
-        //             type="date"
-        //             value={dob}
-        //             onChange={(e) => setDob(e.target.value)}
-        //             className="px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //         />
-        //         {dobError && <p className="text-red-500">{dobError}</p>}
-
-        //         <div className="flex space-x-3">
-        //             <p className="text-gray-400 font-semibold">Gender:</p>
-
-        //             <div className="flex items-center space-x-3">
-        //                 <input
-        //                     id="gender_male"
-        //                     name="gender"
-        //                     type="radio"
-        //                     value="Male"
-        //                     checked={gender === "Male"}
-        //                     onChange={(e) => setGender(e.target.value)}
-        //                     className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-        //                 />
-        //                 <label htmlFor="gender_male" className="text-gray-400 cursor-pointer">
-        //                     Male
-        //                 </label>
-        //             </div>
-
-        //             <div className="flex items-center space-x-3">
-        //                 <input
-        //                     id="gender_female"
-        //                     name="gender"
-        //                     type="radio"
-        //                     value="Female"
-        //                     checked={gender === "Female"}
-        //                     onChange={(e) => setGender(e.target.value)}
-        //                     className="w-4 h-4 text-pink-600 focus:ring-pink-500 border-gray-300"
-        //                 />
-        //                 <label htmlFor="gender_female" className="text-gray-400 cursor-pointer">
-        //                     Female
-        //                 </label>
-        //             </div>
-
-        //             <div className="flex items-center space-x-3">
-        //                 <input
-        //                     id="gender_others"
-        //                     name="gender"
-        //                     type="radio"
-        //                     value="Others"
-        //                     checked={gender === "Others"}
-        //                     onChange={(e) => setGender(e.target.value)}
-        //                     className="w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300"
-        //                 />
-        //                 <label htmlFor="gender_others" className="text-gray-400 cursor-pointer">
-        //                     Others
-        //                 </label>
-        //             </div>
-        //         </div>
-        //         {genderError && <p className="text-red-500">{genderError}</p>}
-
-        //         <input
-        //             id="address"
-        //             name="address"
-        //             type="text"
-        //             placeholder="Enter your home Address"
-        //             value={address}
-        //             onChange={(e) => setAddress(e.target.value)}
-        //             className="px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //         />
-        //         {addressError && <p className="text-red-500">{addressError}</p>}
-
-        //         <div className="flex justify-center space-x-1">
-        //             <input
-        //                 id="password"
-        //                 name="password"
-        //                 type={showPassword ? "text" : "password"}
-        //                 placeholder="Password"
-        //                 value={password}
-        //                 onChange={(e) => setPassword(e.target.value)}
-        //                 className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //             />
-        //             <button
-        //                 type="button"
-        //                 onClick={() => setShowPassword(!showPassword)}
-        //                 className="right-3  text-gray-400 hover:text-white"
-        //             >
-        //                 {showPassword ? "Hide" : "Show"}
-        //             </button>
-        //         </div>
-        //         {passwordError && <p className="text-red-500">{passwordError}</p>}
-
-        //         <div className="flex justify-center space-x-20 mt-4">
-        //             <button
-        //                 type="submit"
-        //                 className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-        //             >
-        //                 Update
-        //             </button>
-        //             <button
-        //                 onClick={handleLogout}
-        //                 type="button"
-        //                 className={"px-8 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition"}
-        //             >
-        //                 Logout
-        //             </button>
-        //         </div>
-        //     </form>
-        // </div>
     );
 }
 

@@ -433,7 +433,7 @@ const StudentRegistration = () => {
                         Register
                     </button>
                     <Link
-                        href="/login"
+                        href="/login/student"
                         type="button"
                         className={"px-8 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"}
                     >
