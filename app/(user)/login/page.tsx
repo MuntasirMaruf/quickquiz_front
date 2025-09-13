@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import React from 'react'
 
+
 const page = () => {
+
     return (
         <div className="max-w-6xl mx-auto m-6 flex flex-col items-center py-50 bg-gray-800 border-2 border-black rounded-md">
             <h3 className="text-3xl font-bold mb-8 text-white">Login as...</h3>
@@ -29,4 +31,7 @@ const page = () => {
     )
 }
 
+
 export default page
+
+
