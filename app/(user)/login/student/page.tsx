@@ -8,7 +8,7 @@ import axios from 'axios';
 
 export default function StudentLoginPage() {
     const [username, setUsername] = useState<string>('Price');
-    const [password, setPassword] = useState<string>('Pa$$w0rd!');
+    const [password, setPassword] = useState<string>('Pa$$w0rd!123');
     const [error, setError] = useState<string>('');
     const router = useRouter();
 
@@ -59,7 +59,7 @@ export default function StudentLoginPage() {
                 alert(res.data.message);
             }
         } catch (err) {
-            alert('Login failed');
+            alert('Login failed ' + err);
         }
     };
 

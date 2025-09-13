@@ -19,10 +19,10 @@ export default function SideBarStudent() {
                     setUsername(res.data.student.username);
                     router.push(`/student/${res.data.student.username}/dashboard`);
                 } else {
-                    router.push('/login');
+                    router.push('/login/student');
                 }
             } catch {
-                router.push('/login');
+                router.push('/login/student');
             }
         };
         checkLogin();
