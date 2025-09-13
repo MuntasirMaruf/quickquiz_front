@@ -3,6 +3,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";   
 import React, { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 const AdminLogin = () => {
   const router = useRouter();
@@ -85,24 +86,25 @@ const AdminLogin = () => {
         {idError && <p className="text-red-500">{idError}</p>}
 
         {/* Password Field */}
-        <div className="flex justify-between items-center">
-          <input
-            id="pass"
-            name="pass"
-            type={showPassword ? "text" : "password"}
-            placeholder="Enter your password"
-            value={pass}
-            onChange={(e) => setPass(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="ml-2 text-gray-400 hover:text-white"
-          >
-            {showPassword ? "Hide" : "Show"}
-          </button>
-        </div>
+        <div className="relative w-full">
+  <input
+    id="pass"
+    name="pass"
+    type={showPassword ? "text" : "password"}
+    placeholder="Enter your password"
+    value={pass}
+    onChange={(e) => setPass(e.target.value)}
+    className="w-full px-4 py-3 pr-10 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+  >
+    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+  </button>
+</div>
+{passError && <p className="text-red-500">{passError}</p>}
         {passError && <p className="text-red-500">{passError}</p>}
 
         {/* Forgot Password Link */}
