@@ -104,7 +104,7 @@ const AdminLogin = () => {
     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
   </button>
 </div>
-{passError && <p className="text-red-500">{passError}</p>}
+
         {passError && <p className="text-red-500">{passError}</p>}
 
         {/* Forgot Password Link */}

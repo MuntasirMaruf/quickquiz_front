@@ -38,7 +38,7 @@ const DashboardPage = () => {
       <div className="bg-gray-800 p-6 rounded-lg shadow border border-gray-700">
         <h2 className="text-2xl font-bold mb-4">Teacher Management</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/dashboard/teacher/view-teacher">
+          <Link href="/admin/viewteacher">
             <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
               View Teachers
             </button>
