@@ -38,18 +38,24 @@ const AdminLogin = () => {
     if (!validateForm()) return;
 
     try {
-      const res = await axios.post("http://localhost:3000/admin/loginAdmin", {
-        id,      
-        pass,     
-      });
+      const res = await axios.post(
+  "http://localhost:3000/admin/loginAdmin",
+  { id, pass },
+  { withCredentials: true } // ✅ store session cookie
+);
 
       if (res.data?.message === "User not found") {
         alert("Login failed: User not found");
         return;
       }
 
+      // Save admin ID in localStorage
+      if (res.data?.id) {
+        localStorage.setItem("adminId", res.data.id);
+      }
+
       alert("Login successful!");
-      router.push("/admin");  // redirect after login
+      router.push("/admin");  // redirect to dashboard
 
       setId("");
       setPass("");
@@ -87,24 +93,23 @@ const AdminLogin = () => {
 
         {/* Password Field */}
         <div className="relative w-full">
-  <input
-    id="pass"
-    name="pass"
-    type={showPassword ? "text" : "password"}
-    placeholder="Enter your password"
-    value={pass}
-    onChange={(e) => setPass(e.target.value)}
-    className="w-full px-4 py-3 pr-10 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-  <button
-    type="button"
-    onClick={() => setShowPassword(!showPassword)}
-    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
-  >
-    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-  </button>
-</div>
-
+          <input
+            id="pass"
+            name="pass"
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            value={pass}
+            onChange={(e) => setPass(e.target.value)}
+            className="w-full px-4 py-3 pr-10 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
         {passError && <p className="text-red-500">{passError}</p>}
 
         {/* Forgot Password Link */}

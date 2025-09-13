@@ -1,4 +1,5 @@
 "use client";
+
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,191 +8,116 @@ import React, { useState, useEffect } from "react";
 const AddAdminPage = () => {
   const router = useRouter();
 
-  // Form fields
-  const [username, setUsername] = useState("");
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [dob, setDob] = useState("");
-  const [gender, setGender] = useState("");
-  const [address, setAddress] = useState("");
+  // Form state
+  const [form, setForm] = useState({
+    username: "",
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    dob: "",
+    gender: "",
+    address: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [profilePic, setProfilePic] = useState<File | null>(null);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Error states
-  const [usernameError, setUsernameError] = useState("");
-  const [firstnameError, setFirstnameError] = useState("");
-  const [lastnameError, setLastnameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [phoneError, setPhoneError] = useState("");
-  const [dobError, setDobError] = useState("");
-  const [genderError, setGenderError] = useState("");
-  const [addressError, setAddressError] = useState("");
-  const [profilePicError, setProfilePicError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
-
+  // Error state
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Check uniqueness of username/email/phone
+  // Debounced uniqueness check
   useEffect(() => {
     const timer = setTimeout(async () => {
       try {
+        const { username, email, phone } = form;
+
         if (username) {
-          const resUsername = await axios.post(
-            "http://localhost:3000/admin/check-username",
-            { username }
-          );
-          setUsernameError(resUsername.data.exists ? "Username already exists." : "");
+          const res = await axios.post("http://localhost:3000/admin/check-username", { username });
+          setErrors(prev => ({ ...prev, username: res.data.exists ? "Username already exists." : "" }));
         }
+
         if (email) {
-          const resEmail = await axios.post(
-            "http://localhost:3000/admin/check-email",
-            { email }
-          );
-          setEmailError(resEmail.data.exists ? "Email already exists." : "");
+          const res = await axios.post("http://localhost:3000/admin/check-email", { email });
+          setErrors(prev => ({ ...prev, email: res.data.exists ? "Email already exists." : "" }));
         }
+
         if (phone) {
-          const resPhone = await axios.post(
-            "http://localhost:3000/admin/check-phone",
-            { phone_number: phone }
-          );
-          setPhoneError(resPhone.data.exists ? "Phone number already exists." : "");
+          const res = await axios.post("http://localhost:3000/admin/check-phone", { phone_number: phone });
+          setErrors(prev => ({ ...prev, phone: res.data.exists ? "Phone number already exists." : "" }));
         }
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error("Uniqueness check failed:", err);
       }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [username, email, phone]);
+  }, [form.username, form.email, form.phone]);
 
   // Form validation
-  function validateForm() {
-    let valid = true;
-    setUsernameError("");
-    setFirstnameError("");
-    setLastnameError("");
-    setEmailError("");
-    setPhoneError("");
-    setDobError("");
-    setGenderError("");
-    setAddressError("");
-    setProfilePicError("");
-    setPasswordError("");
-    setConfirmPasswordError("");
-
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
     const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^01\d{9}$/;
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    if (!username.trim()) {
-      setUsernameError("Username required.");
-      valid = false;
-    } else if (!usernameRegex.test(username)) {
-      setUsernameError(
-        "Username must be 3-20 characters and alphanumeric/underscores."
-      );
-      valid = false;
+    if (!form.username.trim()) newErrors.username = "Username required.";
+    else if (!usernameRegex.test(form.username)) newErrors.username = "Username must be 3-20 chars and alphanumeric/underscores.";
+
+    if (!form.firstname.trim()) newErrors.firstname = "First name required.";
+    if (!form.lastname.trim()) newErrors.lastname = "Last name required.";
+
+    if (!form.email.trim()) newErrors.email = "Email required.";
+    else if (!emailRegex.test(form.email)) newErrors.email = "Invalid email address.";
+
+    if (!form.phone.trim()) newErrors.phone = "Phone number required.";
+    else if (!phoneRegex.test(form.phone)) newErrors.phone = "Invalid 11-digit phone number.";
+
+    if (!form.dob) newErrors.dob = "Date of Birth required.";
+    else {
+      const age = new Date().getFullYear() - new Date(form.dob).getFullYear();
+      if (age < 25) newErrors.dob = "Admin must be at least 25 years old.";
     }
 
-    if (!firstname.trim()) {
-      setFirstnameError("First name required.");
-      valid = false;
-    }
-    if (!lastname.trim()) {
-      setLastnameError("Last name required.");
-      valid = false;
-    }
+    if (!form.gender) newErrors.gender = "Please select gender.";
+    if (!form.address.trim()) newErrors.address = "Address required.";
 
-    if (!email.trim()) {
-      setEmailError("Email required.");
-      valid = false;
-    } else if (!emailRegex.test(email)) {
-      setEmailError("Invalid email address.");
-      valid = false;
-    }
+    if (!profilePic) newErrors.profilePic = "Profile picture is required.";
 
-    if (!phone.trim()) {
-      setPhoneError("Phone number required.");
-      valid = false;
-    } else if (!phoneRegex.test(phone)) {
-      setPhoneError("Invalid 11-digit phone number.");
-      valid = false;
-    }
+    if (!form.password) newErrors.password = "Password required.";
+    else if (!passwordRegex.test(form.password)) newErrors.password = "Password must be 8+ chars, include uppercase, lowercase, number, special char.";
 
-    if (!dob.trim()) {
-      setDobError("Date of Birth required.");
-      valid = false;
-    } else {
-      const today = new Date();
-      const birthDate = new Date(dob);
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate()))
-        age--;
-      if (age < 25) {
-        setDobError("Admin must be at least 25 years old.");
-        valid = false;
-      }
-    }
+    if (!form.confirmPassword) newErrors.confirmPassword = "Please confirm your password.";
+    else if (form.password !== form.confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
 
-    if (!gender) {
-      setGenderError("Please select gender.");
-      valid = false;
-    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    if (!address.trim()) {
-      setAddressError("Address required.");
-      valid = false;
-    }
+  // Handle input change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
 
-    if (!profilePic) {
-      setProfilePicError("Profile picture is required.");
-      valid = false;
-    }
-
-    if (!password) {
-      setPasswordError("Password required.");
-      valid = false;
-    } else if (!passwordRegex.test(password)) {
-      setPasswordError(
-        "Password must be 8+ chars, include uppercase, lowercase, number, special char."
-      );
-      valid = false;
-    }
-
-    if (!confirmPassword) {
-      setConfirmPasswordError("Please confirm your password.");
-      valid = false;
-    } else if (password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match.");
-      valid = false;
-    }
-
-    return valid;
-  }
-
-  // Handle form submission
+  // Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     try {
       const formData = new FormData();
-      formData.append("username", username);
-      formData.append("fullname", `${firstname} ${lastname}`);
-      formData.append("email", email);
-      formData.append("phone_number", phone);
-      formData.append("date_of_birth", dob);
-      formData.append("gender", gender);
-      formData.append("address", address);
-      formData.append("password", password);
+      formData.append("username", form.username);
+      formData.append("fullname", `${form.firstname} ${form.lastname}`);
+      formData.append("email", form.email);
+      formData.append("phone_number", form.phone);
+      formData.append("date_of_birth", form.dob);
+      formData.append("gender", form.gender);
+      formData.append("address", form.address);
+      formData.append("password", form.password);
       if (profilePic) formData.append("profilePic", profilePic);
 
       await axios.post("http://localhost:3000/admin/addAdminnew", formData, {
@@ -201,105 +127,90 @@ const AddAdminPage = () => {
       alert("Admin added successfully!");
       router.push("/admin");
 
-      // Clear form
-      setUsername("");
-      setFirstname("");
-      setLastname("");
-      setEmail("");
-      setPhone("");
-      setDob("");
-      setGender("");
-      setAddress("");
-      setPassword("");
-      setConfirmPassword("");
+      // Reset form
+      setForm({
+        username: "",
+        firstname: "",
+        lastname: "",
+        email: "",
+        phone: "",
+        dob: "",
+        gender: "",
+        address: "",
+        password: "",
+        confirmPassword: "",
+      });
       setProfilePic(null);
-    } catch (error) {
-      console.error("Error adding admin:", error);
-      alert("Failed to add admin. Check console for details.");
+      setErrors({});
+    } catch (err: any) {
+      console.error("Error adding admin:", err);
+      alert(err?.response?.data?.message || "Failed to add admin. Check console.");
     }
   };
+
   return (
     <div className="max-w-6xl mx-auto m-6 flex flex-col items-center py-20 bg-gray-800 border-2 border-black rounded-md">
       <h3 className="text-3xl font-bold mb-8 text-white">Add Admin</h3>
-
       <form className="flex flex-col space-y-4 w-full max-w-lg px-4 sm:px-6 md:px-0" onSubmit={handleSubmit} noValidate>
 
-        {/* Username */}
-        <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)}
+        <input type="text" name="username" placeholder="Username" value={form.username} onChange={handleChange}
           className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        {usernameError && <p className="text-red-500">{usernameError}</p>}
+        {errors.username && <p className="text-red-500">{errors.username}</p>}
 
-        {/* Firstname & Lastname */}
-        <input type="text" placeholder="First Name" value={firstname} onChange={e => setFirstname(e.target.value)}
+        <input type="text" name="firstname" placeholder="First Name" value={form.firstname} onChange={handleChange}
           className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        {firstnameError && <p className="text-red-500">{firstnameError}</p>}
+        {errors.firstname && <p className="text-red-500">{errors.firstname}</p>}
 
-        <input type="text" placeholder="Last Name" value={lastname} onChange={e => setLastname(e.target.value)}
+        <input type="text" name="lastname" placeholder="Last Name" value={form.lastname} onChange={handleChange}
           className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        {lastnameError && <p className="text-red-500">{lastnameError}</p>}
+        {errors.lastname && <p className="text-red-500">{errors.lastname}</p>}
 
-        {/* Email */}
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}
+        <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange}
           className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        {emailError && <p className="text-red-500">{emailError}</p>}
+        {errors.email && <p className="text-red-500">{errors.email}</p>}
 
-        {/* Phone */}
-        <input type="tel" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)}
+        <input type="tel" name="phone" placeholder="Phone Number" value={form.phone} onChange={handleChange}
           className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        {phoneError && <p className="text-red-500">{phoneError}</p>}
+        {errors.phone && <p className="text-red-500">{errors.phone}</p>}
 
-        {/* DOB */}
-        <input type="date" value={dob} onChange={e => setDob(new Date(e.target.value).toISOString().split('T')[0])}
+        <input type="date" name="dob" value={form.dob} onChange={handleChange}
           className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        {dobError && <p className="text-red-500">{dobError}</p>}
+        {errors.dob && <p className="text-red-500">{errors.dob}</p>}
 
-        {/* Gender */}
         <div className="flex space-x-3">
           {['Male', 'Female', 'Other'].map(g => (
             <label key={g} className="text-gray-400 flex items-center space-x-1">
-              <input type="radio" name="gender" value={g} checked={gender === g} onChange={e => setGender(e.target.value)}
+              <input type="radio" name="gender" value={g} checked={form.gender === g} onChange={handleChange}
                 className="w-4 h-4 focus:ring-blue-500 border-gray-300" /> <span>{g}</span>
             </label>
           ))}
         </div>
-        {genderError && <p className="text-red-500">{genderError}</p>}
+        {errors.gender && <p className="text-red-500">{errors.gender}</p>}
 
-        {/* Address */}
-        <input type="text" placeholder="Address" value={address} onChange={e => setAddress(e.target.value)}
+        <input type="text" name="address" placeholder="Address" value={form.address} onChange={handleChange}
           className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        {addressError && <p className="text-red-500">{addressError}</p>}
+        {errors.address && <p className="text-red-500">{errors.address}</p>}
 
-        {/* Profile picture */}
         <input type="file" accept="image/*" onChange={e => setProfilePic(e.target.files ? e.target.files[0] : null)} />
-        {profilePicError && <p className="text-red-500">{profilePicError}</p>}
+        {errors.profilePic && <p className="text-red-500">{errors.profilePic}</p>}
 
-        {/* Password */}
         <div className="flex justify-between items-center">
-          <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}
+          <input type={showPassword ? "text" : "password"} name="password" placeholder="Password" value={form.password} onChange={handleChange}
             className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
           <button type="button" onClick={() => setShowPassword(!showPassword)} className="ml-2 text-gray-400">{showPassword ? "Hide" : "Show"}</button>
         </div>
-        {passwordError && <p className="text-red-500">{passwordError}</p>}
+        {errors.password && <p className="text-red-500">{errors.password}</p>}
 
-        {/* Confirm Password */}
         <div className="flex justify-between items-center">
-          <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+          <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" placeholder="Confirm Password" value={form.confirmPassword} onChange={handleChange}
             className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
           <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="ml-2 text-gray-400">{showConfirmPassword ? "Hide" : "Show"}</button>
         </div>
-        {confirmPasswordError && <p className="text-red-500">{confirmPasswordError}</p>}
+        {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword}</p>}
 
-        {/* Buttons */}
         <div className="flex justify-center space-x-6 mt-4">
           <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Add Admin</button>
-
-          <Link
-            href="/admin"
-            className="px-6 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
-          >
-            Back
-          </Link>
-          
+          <Link href="/admin" className="px-6 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">Back</Link>
         </div>
       </form>
     </div>
