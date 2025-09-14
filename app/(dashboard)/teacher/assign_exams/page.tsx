@@ -105,8 +105,6 @@ const AssignExamsPage = ({ params }: PageProps) => {
                                 </span>
                             </p>
                         </div>
-
-
                     </div>
 
                     {/* Actions */}

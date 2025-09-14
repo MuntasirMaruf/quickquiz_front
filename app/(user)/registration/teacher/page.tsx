@@ -83,7 +83,7 @@ export default function RegistrationPage() {
         try {
             const data = {
                 username: username,
-                fullname: fullName,
+                fullName: fullName,
                 email: email,
                 phone_number: phoneNumber,
                 date_of_birth: dateOfBirth,

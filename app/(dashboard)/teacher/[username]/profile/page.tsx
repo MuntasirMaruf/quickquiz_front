@@ -7,9 +7,9 @@ import Button from "@/app/components/teacher/Button";
 
 export default function Page() {
   const router = useRouter();
-  const { username } = useParams<{ username: string }>(); // ✅ useParams in client component
+  const { username } = useParams<{ username: string }>(); 
 
-  // Optional guard during very first render
+  
   if (!username) return null;
 
   // state
@@ -42,8 +42,7 @@ export default function Page() {
         setPhoneNumber(data.phone_number ?? "");
         setDateOfBirth(data.date_of_birth ? data.date_of_birth.split("T")[0] : "");
         setGender(data.gender ?? "");
-        setAddress(data.address ?? "");
-        //  Do not prefill password on fetch
+        setAddress(data.address ?? "")
         setPassword("");
       } catch (err) {
         console.error(err);

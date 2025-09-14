@@ -12,7 +12,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
         <h2 className="text-xl font-bold mb-6">Teacher Panel</h2>
 
         <div className="active flex flex-col space-y-3">
-          <Link href="/teacher" className="py-2 px-3 rounded hover:bg-gray-700">
+          <Link href={`/teacher/{akash}`} className="py-2 px-3 rounded hover:bg-gray-700">
             Dashboard
           </Link>
           <Link href="/registration/teacher" className="py-2 px-3 rounded hover:bg-gray-700">
