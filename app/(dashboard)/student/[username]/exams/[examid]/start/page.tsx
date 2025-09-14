@@ -9,6 +9,7 @@ type PageProps = {
 };
 
 type ExamQuestionItem = {
+    id: number;
     exam_ssc: { id: number };
     question_cq_ssc: { id: number }
 };
@@ -52,13 +53,13 @@ const StartExamPage = ({ params }: PageProps) => {
     const [questions, setQuestions] = useState<QuestionItem[]>([]);
     const [exam, setExam] = useState<ExamItem>();
     const [answers, setAnswers] = useState<Record<string, string>>({});
-    const [empty, setEmpty] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const [studentId, setStudentId] = useState();
 
     useEffect(() => {
         fetchExamQuestions();
+        fetchStudent();
     }, []);
 
     const [timeLeft, setTimeLeft] = useState({ minutes: 0, seconds: 0 });
@@ -93,15 +94,38 @@ const StartExamPage = ({ params }: PageProps) => {
 
 
     const handleSubmitAuto = async () => {
+        if (!examQuestions || examQuestions.length === 0) return;
+
         try {
+            for (let i = 0; i < examQuestions.length; i++) {
+                const q = examQuestions[i];
 
+                const payload = {
+                    answer_1: answers[`q${i}_1`] || "",
+                    answer_2: answers[`q${i}_2`] || "",
+                    answer_3: answers[`q${i}_3`] || "",
+                    answer_4: answers[`q${i}_4`] || "",
+                    exam_question_id: q.id,
+                    exam_id: examid,
+                    student_id: studentId,
+                    teacher_id: null,
+                };
 
-            alert("Your answers have been submitted!");
-            router.push(`/student/${username}/exams`);
+                await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/answer_ssc/create`,
+                    payload,
+                    { withCredentials: true }
+                );
+            }
+
+            alert("All answers saved successfully!");
+            router.back();
         } catch (error) {
-
+            console.error(error);
+            alert("Something went wrong while submitting answers.");
         }
     };
+
 
 
     async function fetchExamQuestions() {
@@ -131,6 +155,7 @@ const StartExamPage = ({ params }: PageProps) => {
                     withCredentials: true
                 }
             );
+            setStudentId(response.data.id)
         }
         catch (error) {
             console.error(error);
@@ -152,7 +177,6 @@ const StartExamPage = ({ params }: PageProps) => {
         try {
             if (questionIds.length === 0) {
                 setQuestions([]);
-                setEmpty(true);
                 setLoading(false);
                 return;
             }
@@ -165,10 +189,8 @@ const StartExamPage = ({ params }: PageProps) => {
 
             const dataQ: QuestionItem[] = responses.map(res => res.data);
             setQuestions(dataQ);
-            setEmpty(dataQ.length === 0);
         } catch (error) {
             console.error(error);
-            setEmpty(true);
         } finally {
             setLoading(false);
         }

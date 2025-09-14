@@ -54,10 +54,31 @@ const ExamDetailsPage = ({ params }: PageProps) => {
     const [exam, setExam] = useState<ExamItem>()
     const [empty, setEmpty] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [examDone, setExamDone] = useState(false);
 
     useEffect(() => {
         fetchExamQuestions();
+        fetchAnswers();
     }, []);
+
+    async function fetchAnswers() {
+        try {
+            const res = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/answer_ssc/answers`,
+                { username, examid },
+                { withCredentials: true }
+            );
+
+            if (Array.isArray(res.data) && res.data.length > 0) {
+                setExamDone(true);
+            } else {
+                setExamDone(false);
+            }
+        } catch (error) {
+            console.error("Error fetching answers:", error);
+            setExamDone(false);
+        }
+    }
 
     async function fetchExamQuestions() {
         try {
@@ -216,6 +237,13 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                         >
                             {exam?.isExpired ? "Expired" : "No Questions"}
                         </button>
+                    ) : examDone ? (
+                        <Link
+                            href='#'
+                            className="flex items-center px-4 py-2 bg-gray-700 rounded-lg"
+                        >
+                            Done
+                        </Link>
                     ) : (
                         <Link
                             href={`/student/${username}/exams/${examid}/start`}
