@@ -375,7 +375,7 @@ const AdminRegistration = () => {
 
                 <div className="flex flex-col">
     <label htmlFor="profilePic" className="text-gray-400 mb-1">
-        Profile Picture (optional)
+        Profile Picture 
     </label>
         <input
           id="profilePic"

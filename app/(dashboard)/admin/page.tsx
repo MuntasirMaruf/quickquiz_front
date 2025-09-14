@@ -52,7 +52,7 @@ const DashboardPage = () => {
         localStorage.removeItem("adminId");
         router.push("/login/admin");
       }
-    }, 5000); // check every 5 seconds
+    }, 10000); // check every 5 seconds
 
     return () => clearInterval(interval);
   }, [router]);

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -14,33 +15,10 @@ interface Admin {
 const ViewAdminPage = () => {
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sessionChecked, setSessionChecked] = useState(false);//here
   const router = useRouter();
 
-  // Check session immediately on mount
+  // Fetch all admins
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/admin/check-session", { withCredentials: true });
-        if (!res.data.loggedIn) {
-          localStorage.removeItem("adminId");
-          router.push("/login/admin");
-        } else {
-          setSessionChecked(true); // session valid, allow fetching admins
-        }
-      } catch (err) {
-        localStorage.removeItem("adminId");
-        router.push("/login/admin");
-      }
-    };
-
-    checkSession();
-  }, [router]);
-
-  // Fetch admins only after session is verified
-  useEffect(() => {
-    if (!sessionChecked) return;
-
     const fetchAdmins = async () => {
       try {
         const res = await axios.get("http://localhost:3000/admin/getAdmin");
@@ -51,17 +29,16 @@ const ViewAdminPage = () => {
         setLoading(false);
       }
     };
-
     fetchAdmins();
-  }, [sessionChecked]);
+  }, []);
 
-  // Optional: keep session alive with interval
+  // Check admin session every 30 seconds
   useEffect(() => {
-    if (!sessionChecked) return;
-
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get("http://localhost:3000/admin/check-session", { withCredentials: true });
+        const res = await axios.get("http://localhost:3000/admin/check-session", {
+          withCredentials: true,
+        });
         if (!res.data.loggedIn) {
           localStorage.removeItem("adminId");
           router.push("/login/admin");
@@ -73,15 +50,7 @@ const ViewAdminPage = () => {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [router, sessionChecked]);
-
-  if (!sessionChecked) {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <p>Checking session...</p>
-      </div>
-    );
-  }
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">

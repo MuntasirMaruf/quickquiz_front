@@ -41,7 +41,7 @@ const AdminLogin = () => {
       const res = await axios.post(
   "http://localhost:3000/admin/loginAdmin",
   { id, pass },
-  { withCredentials: true } // ✅ store session cookie
+  { withCredentials: true } //  store session cookie
 );
 
       if (res.data?.message === "User not found") {
@@ -115,7 +115,7 @@ const AdminLogin = () => {
         {/* Forgot Password Link */}
         <div className="text-right">
           <Link
-            href="/forgotpassword"
+            href="/forgot_password"
             className="text-blue-400 hover:text-blue-600 text-sm"
           >
             Forgot Password?
