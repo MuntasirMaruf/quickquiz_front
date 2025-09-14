@@ -49,10 +49,11 @@ const ExamDetailsPage = ({ params }: PageProps) => {
     const { username, examid } = React.use(params);
     const router = useRouter();
 
-
     const [examQuestions, setexamQuestions] = useState<ExamQuestionItem[] | null>(null);
     const [questions, setQuestions] = useState<QuestionItem[]>([]);
     const [exam, setExam] = useState<ExamItem>()
+    const [empty, setEmpty] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchExamQuestions();
@@ -108,6 +109,13 @@ const ExamDetailsPage = ({ params }: PageProps) => {
 
     async function fetchQuestionsDetails(questionIds: (string | number)[]) {
         try {
+            if (questionIds.length === 0) {
+                setQuestions([]);
+                setEmpty(true);
+                setLoading(false);
+                return;
+            }
+
             const responses = await Promise.all(
                 questionIds.map(id =>
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/get/question/${id}`)
@@ -116,8 +124,12 @@ const ExamDetailsPage = ({ params }: PageProps) => {
 
             const dataQ: QuestionItem[] = responses.map(res => res.data);
             setQuestions(dataQ);
+            setEmpty(dataQ.length === 0);
         } catch (error) {
             console.error(error);
+            setEmpty(true);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -172,9 +184,7 @@ const ExamDetailsPage = ({ params }: PageProps) => {
 
     return (
         <div className="flex justify-center bg-gray-100 min-h-screen p-4">
-            <div className="w-full max-w-10xl space-y-6">
-
-                {/* Header Section */}
+            <div className="w-full max-w-10xl space-y-4">
                 <div className="bg-gray-800 text-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <button
                         onClick={() => router.back()}
@@ -183,7 +193,6 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                         Back
                     </button>
 
-                    {/* Exam Info */}
                     <div className="bg-gray-900 rounded-lg shadow-inner px-4 py-2 flex flex-wrap gap-6 justify-between flex-1">
                         <p><span className="font-semibold text-gray-300">Id:</span> {examid}</p>
                         <p><span className="font-semibold text-gray-300">Name:</span> {exam?.name}</p>
@@ -193,12 +202,19 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                         <p><span className="font-semibold text-gray-300">Duration:</span> {exam?.duration} Minutes</p>
                     </div>
 
-                    {exam?.isExpired ? (
+                    {loading ? (
+                        <button
+                            disabled
+                            className="bg-gray-500 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed"
+                        >
+                            Loading...
+                        </button>
+                    ) : exam?.isExpired || empty ? (
                         <button
                             disabled
                             className="bg-red-500 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed"
                         >
-                            Expired
+                            {exam?.isExpired ? "Expired" : "No Questions"}
                         </button>
                     ) : (
                         <Link
@@ -208,18 +224,19 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                             Start
                         </Link>
                     )}
-
                 </div>
 
-                {/* Questions Section */}
-                <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-h-[78vh] overflow-y-auto">
-                    {questions.length > 0 ? (
+                <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-h-[79vh] overflow-y-auto">
+                    {loading ? (
+                        <p className="text-gray-400 text-center italic">Loading questions...</p>
+                    ) : questions.length > 0 ? (
                         printArray(questions)
                     ) : (
-                        <p className="text-gray-500 text-center italic">No questions found for this exam.</p>
+                        <p className="text-gray-500 text-center italic">
+                            No questions found for this exam.
+                        </p>
                     )}
                 </div>
-
             </div>
         </div>
     );

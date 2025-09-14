@@ -287,7 +287,7 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                             name="username"
                             type="text"
                             placeholder="Enter your username"
-                            value={username}
+                            value={username_id}
                             onChange={(e) => setUsername(e.target.value)}
                             className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />

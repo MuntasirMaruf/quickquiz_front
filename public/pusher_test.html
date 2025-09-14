@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pusher Beams Test</title>
+    <script src="https://js.pusher.com/beams/2.1.0/push-notifications-cdn.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Pusher Beams Test</h1>
+    <div id="status">Initializing...</div>
+    <p>Grant notification permission when prompted.</p>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+
+        const beamsClient = new PusherPushNotifications.Client({
+            instanceId: '6f217e32-50af-477f-a270-2eda58db0fab',
+        });
+
+        statusDiv.textContent = 'Starting Pusher Beams...';
+
+        beamsClient.start()
+            .then(() => {
+                statusDiv.textContent = 'Subscribing to interest...';
+                return beamsClient.addDeviceInterest('hello');
+            })
+            .then(() => {
+                statusDiv.textContent = '✅ Successfully registered and subscribed!';
+                statusDiv.className = 'status success';
+                console.log('Successfully registered and subscribed!');
+            })
+            .catch(error => {
+                statusDiv.textContent = `❌ Error: ${error.message}`;
+                statusDiv.className = 'status error';
+                console.error('Error:', error);
+            });
+    </script>
+</body>
+
+</html>
+
+<!-- Invoke-RestMethod -Uri
+"https://6f217e32-50af-477f-a270-2eda58db0fab.pushnotifications.pusher.com/publish_api/v1/instances/6f217e32-50af-477f-a270-2eda58db0fab/publishes"
+-Method Post -Headers @{"Content-Type"="application/json"; "Authorization"="Bearer
+927FAC76F7E7D858265599685E2DC36DEA8339B35D6CBCFAA655932D4B44E913"} -Body
+'{"interests":["hello"],"web":{"notification":{"title":"Hello","body":"Hello, world!"}}}' -->

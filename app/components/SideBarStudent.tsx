@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, File, Bell, Home, User, Settings, Mail, ChevronLeft, ChevronRight } from "lucide-react";
+import { Menu, File, Bell, Home, User, Settings, Mail, ChevronLeft, ChevronRight, Award, Medal, Trophy, FileText, BarChart3 } from "lucide-react";
 import axios from "axios";
 
 export default function SideBarStudent() {
@@ -31,8 +31,8 @@ export default function SideBarStudent() {
 
     const menuItems = [
         { id: "dashboard", label: "Dashboard", icon: Home, page: `/student/${username}/dashboard` },
-        { id: "exams", label: "Exams", icon: File, page: `/student/${username}/exams` },
-        { id: "results", label: "Results", icon: Menu, page: `/student/${username}/results` },
+        { id: "exams", label: "Exams", icon: FileText, page: `/student/${username}/exams` },
+        { id: "results", label: "Results", icon: Award, page: `/student/${username}/results` },
         { id: "messages", label: "Messages", icon: Mail, page: `/student/${username}/messages` },
         { id: "notifications", label: "Notifications", icon: Bell, page: `/student/${username}/notifications` },
         { id: "profile", label: "Profile", icon: User, page: `/student/${username}/profile` },

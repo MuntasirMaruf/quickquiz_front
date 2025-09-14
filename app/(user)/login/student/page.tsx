@@ -46,7 +46,7 @@ export default function StudentLoginPage() {
                 { withCredentials: true }
             );
             if (res.data.student) {
-                router.push(`/student/${res.data.student.username}/dashboard`);
+                router.push(`/student/${username}/dashboard`);
             } else {
                 alert(res.data.message);
             }
@@ -110,7 +110,7 @@ export default function StudentLoginPage() {
                 </button>
 
 
-                <div className="mt-4 flex flex-col items-center space-y-2">
+                <div className="mt-4 flex flex-col items-center space-y-3">
                     <Link
                         href="/forgot_password/student"
                         className="text-sm text-blue-400 hover:text-blue-500 underline"
