@@ -23,7 +23,7 @@ export default function LoginPage() {
             return;
         }
 
-        console.log('Login attempt:', { username, password });
+        // console.log('Login attempt:', { username, password });
 
         router.push('/teacher/'+username);
     };
@@ -51,7 +51,7 @@ export default function LoginPage() {
 
                 <button type="submit">LOG IN</button>
                 <br />
-                <p>Don't have an account? <Link href="/register">Registration</Link></p>
+                <p>Don't have an account? <Link href="/registration">Registration</Link></p>
                 <br />
                 <div>
                     <p>Forgot Password? <Link href="/forgot_password"> Forgot_Password</Link></p>

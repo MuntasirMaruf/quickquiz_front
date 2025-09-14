@@ -170,23 +170,11 @@ export default function CreateAssignment() {
                 </button>
               </div>
             ))}
-{/* 
-            <button
-              type="button"
-              onClick={addQuestion}
-              className="rounded bg-blue-600 px-4 py-2 text-white"
-            >
-              Add question
-            </button> */}
+
+           
              <Button type="submit"> Add question</Button>
           </div>
-{/* 
-          <button
-            type="submit"
-            className="w-full rounded bg-green-600 px-4 py-2 font-semibold text-white disabled:opacity-60"
-          >Create Assignment
-            
-          </button> */}
+
            <Button type="submit">Create Assignment</Button>
         </form>
       </div>

@@ -18,10 +18,10 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
           <Link href="/registration/teacher" className="py-2 px-3 rounded hover:bg-gray-700">
             Register
           </Link>
-          <Link href={`/teacher/{username}/profile`} className="py-2 px-3 rounded hover:bg-gray-700">
-            Profile
+           <Link   href="/teacher/assign_exams" className="py-2 px-3 rounded hover:bg-gray-700">
+            Assign_Exam
           </Link>
-        </div>
+        </div> 
       </aside>
 
       {/* Main Content */}

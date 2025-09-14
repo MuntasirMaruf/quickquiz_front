@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import Link from "next/link";
+
 
 type Item = {
     id: number | string;
@@ -74,11 +76,12 @@ const AssignExamsPage = ({ params }: PageProps) => {
     const printArray = (jsonData: Item[]) => {
         return jsonData.map((item, index) => {
             return (
+               
                 <div
                     key={index}
                     className="mb-4 p-6 bg-gray-700 rounded-xl shadow-lg text-white flex justify-between"
                 >
-                    {/* Info Section */}
+                    Info Section
                     <div className="flex justify-between w-200">
                         <div>
                             <p><span className="text-gray-300">ID:</span> {item.id}</p>
@@ -107,15 +110,19 @@ const AssignExamsPage = ({ params }: PageProps) => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex space-x-4">
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow">
-                            Add Questions
-                        </button>
+                    {/* <div className="flex space-x-4">
+                        <Link
+                     href="/teacher/create_exam_ssc"
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-2 rounded-lg shadow inline-block"
+                     >
+                  Add Questions
+                   </Link>
                         <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow">
                             View Details
                         </button>
-                    </div>
+                    </div> */}
                 </div>
+                
             );
         });
     };
@@ -135,31 +142,47 @@ const AssignExamsPage = ({ params }: PageProps) => {
     // }
 
     return (
-        <div className="flex p-8 bg-gray-100 w-full">
-            <div className="max-w-10xl mx-auto w-full">
-                <div className="bg-gray-900 rounded-lg shadow-lg mb-6 flex items-center justify-between p-6">
-                    <p className="text-white text-2xl font-bold">Assign Exams</p>
-                    {/* Sort By Dropdown */}
-                    <select
-                        className="bg-gray-800 text-white text-sm px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        defaultValue="name"
-                    >
-                        <option value="default" disabled>
-                            Sort By
-                        </option>
-                        <option value="name">Name</option>
-                        <option value="marks">Marks</option>
-                        <option value="duration">Duration</option>
-                        <option value="date">Date</option>
-                        <option value="status">Status</option>
-                    </select>
+     
 
-                </div>
-                <div className="bg-white rounded-lg shadow-lg p-8 max-h-[70vh] overflow-y-auto">
-                    {jsonData && Array.isArray(jsonData) ? printArray(jsonData) : null}
-                </div>
-            </div>
-        </div>
+      <div className="flex flex-col p-8 bg-gray-100 w-full">
+  <div className="max-w-10xl mx-auto w-full">
+    <div className="bg-gray-900 rounded-lg shadow-lg mb-6 flex items-center justify-between p-6">
+      <p className="text-white text-2xl font-bold">Assign Exams</p>
+      {/* Sort By Dropdown */}
+      <select
+        className="bg-gray-800 text-white text-sm px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        defaultValue="name"
+      >
+        <option value="default" disabled>
+          Sort By
+        </option>
+        <option value="name">Name</option>
+        <option value="marks">Marks</option>
+        <option value="duration">Duration</option>
+        <option value="date">Date</option>
+        <option value="status">Status</option>
+      </select>
+    </div>
+    <div className="bg-white rounded-lg shadow-lg p-8 max-h-[70vh] overflow-y-auto">
+      {jsonData && Array.isArray(jsonData) ? printArray(jsonData) : null}
+    </div>
+  </div>
+  <div  className="mb-4 p-6 bg-white-800 rounded-xl shadow-lg text-white " 
+  
+  >  
+   <div className="flex space-x-4">
+                        <Link
+                     href="/teacher/create_exam_ssc"
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-2 rounded-lg shadow inline-block"
+                     >
+                  Add Questions
+                   </Link>
+                        <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow">
+                            View Details
+                        </button>
+                    </div>
+  </div>
+</div>
     );
 };
 

@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter ,useParams} from "next/navigation";
 import axios from "axios";
 import Button from "@/app/components/teacher/Button";
 
-type PageProps = {
-  params: { username: string }; // ✅ plain object, no Promise
-};
-
-export default function Page({ params }: PageProps) {
-  const { username } = params; // ✅ get route param
+export default function Page() {
   const router = useRouter();
-  
+  const { username } = useParams<{ username: string }>(); // ✅ useParams in client component
+
+  // Optional guard during very first render
+  if (!username) return null;
 
   // state
   const [id, setId] = useState<number | null>(null);
@@ -45,7 +43,7 @@ export default function Page({ params }: PageProps) {
         setDateOfBirth(data.date_of_birth ? data.date_of_birth.split("T")[0] : "");
         setGender(data.gender ?? "");
         setAddress(data.address ?? "");
-        // ⚠️ Do not prefill password on fetch
+        //  Do not prefill password on fetch
         setPassword("");
       } catch (err) {
         console.error(err);
@@ -110,15 +108,8 @@ export default function Page({ params }: PageProps) {
     try {
       const base = process.env.NEXT_PUBLIC_API_URL;
 
-      // If you need to upload the display picture, switch to FormData:
-      // const form = new FormData();
-      // form.append("username", username);
-      // form.append("fullname", fullName);
-      // ...
-      // if (displayPicture) form.append("display_picture", displayPicture);
-
       const payload: Record<string, unknown> = {
-        username,
+        username: user_name,
         fullname: fullName,
         email,
         phone_number: phoneNumber,
