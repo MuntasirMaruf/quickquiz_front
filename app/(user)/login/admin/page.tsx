@@ -115,7 +115,7 @@ const AdminLogin = () => {
         {/* Forgot Password Link */}
         <div className="text-right">
           <Link
-            href="/forgot-password"
+            href="/forgotpassword"
             className="text-blue-400 hover:text-blue-600 text-sm"
           >
             Forgot Password?

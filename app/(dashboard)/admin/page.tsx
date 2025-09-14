@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import Pusher from "pusher-js";
 import { Bell } from "lucide-react";
 
 const DashboardPage = () => {
@@ -63,26 +62,6 @@ const DashboardPage = () => {
     localStorage.removeItem("adminId");
     router.push("/login/admin");
   };
-
-  // Pusher subscription
-  useEffect(() => {
-    const pusher = new Pusher("06502ea51c15be4dd2e3", { cluster: "ap2", forceTLS: true });
-    const channel = pusher.subscribe("admin-channel");
-
-    channel.bind("admin-created", (data: any) => {
-      if (data?.message) {
-        setNotifications(prev => [data.message, ...prev]);
-        setLatestNotification(data.message);
-        setTimeout(() => setLatestNotification(null), 5000);
-      }
-    });
-
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-      pusher.disconnect();
-    };
-  }, []);
 
   // Notification dropdown component
   const NotificationDropdown = () => (

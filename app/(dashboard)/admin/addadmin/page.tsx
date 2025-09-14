@@ -178,7 +178,7 @@ const AddAdminPage = () => {
         {errors.dob && <p className="text-red-500">{errors.dob}</p>}
 
         <div className="flex space-x-3">
-          {['Male', 'Female', 'Other'].map(g => (
+          {['Male', 'Female'].map(g => (
             <label key={g} className="text-gray-400 flex items-center space-x-1">
               <input type="radio" name="gender" value={g} checked={form.gender === g} onChange={handleChange}
                 className="w-4 h-4 focus:ring-blue-500 border-gray-300" /> <span>{g}</span>

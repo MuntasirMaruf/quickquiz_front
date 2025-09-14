@@ -15,7 +15,7 @@ const UpdateTeacherPage = () => {
   const [gender, setGender] = useState("");
   const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [salary, setSalary] = useState("");
+  //const [salary, setSalary] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -39,7 +39,7 @@ const UpdateTeacherPage = () => {
       setDateOfBirth(data.date_of_birth ? data.date_of_birth.split("T")[0] : "");
       setGender(data.gender || "");
       setAddress(data.address || "");
-      setSalary(data.salary?.toString() || "");
+      //setSalary(data.salary?.toString() || "");
       setPassword(""); // always blank
     } catch (err) {
       console.error(err);
@@ -56,7 +56,7 @@ const UpdateTeacherPage = () => {
     if (!dateOfBirth.trim()) newErrors.dateOfBirth = "Date of birth required.";
     if (!gender.trim()) newErrors.gender = "Please select gender.";
     if (!address.trim()) newErrors.address = "Address required.";
-    if (!/^\d+(\.\d+)?$/.test(salary)) newErrors.salary = "Salary must be a valid number.";
+    //if (!/^\d+(\.\d+)?$/.test(salary)) newErrors.salary = "Salary must be a valid number.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -74,7 +74,7 @@ const UpdateTeacherPage = () => {
         date_of_birth: dateOfBirth,
         gender,
         address,
-        salary: parseFloat(salary),
+        //salary: parseFloat(salary),
       };
       if (password.trim()) body.password = password;
 
@@ -169,14 +169,14 @@ const UpdateTeacherPage = () => {
         />
         {errors.address && <p className="text-red-500">{errors.address}</p>}
 
-        <input
+        {/* <input
           type="text"
           placeholder="Salary"
           value={salary}
           onChange={(e) => setSalary(e.target.value)}
           className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white"
         />
-        {errors.salary && <p className="text-red-500">{errors.salary}</p>}
+        {errors.salary && <p className="text-red-500">{errors.salary}</p>} */}
 
         <div className="flex items-center space-x-2">
           <input
