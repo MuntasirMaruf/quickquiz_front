@@ -7,17 +7,16 @@ import axios from "axios";
 export default function SideBarStudent() {
     const [isOpen, setIsOpen] = useState(true);
     const [activeItem, setActiveItem] = useState("dashboard");
+    const [username, setUsername] = useState("");
     const router = useRouter();
 
-
-    const [username, setUsername] = useState("");
+    // Fetch logged-in user info
     useEffect(() => {
         const checkLogin = async () => {
             try {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, { withCredentials: true });
                 if (res.data.loggedIn) {
                     setUsername(res.data.student.username);
-                    router.push(`/student/${res.data.student.username}/dashboard`);
                 } else {
                     router.push('/login/student');
                 }
@@ -28,7 +27,7 @@ export default function SideBarStudent() {
         checkLogin();
     }, []);
 
-
+    // Determine current active menu based on URL
     const menuItems = [
         { id: "dashboard", label: "Dashboard", icon: Home, page: `/student/${username}/dashboard` },
         { id: "exams", label: "Exams", icon: FileText, page: `/student/${username}/exams` },
@@ -40,11 +39,17 @@ export default function SideBarStudent() {
     ];
 
     useEffect(() => {
-        const selectedItem = menuItems.find((item) => item.id === activeItem);
-        if (selectedItem) {
-            router.push(selectedItem.page);
-        }
-    }, [activeItem]);
+        if (!username) return;
+        const path = window.location.pathname;
+        const currentItem = menuItems.find(item => path.includes(item.id));
+        if (currentItem) setActiveItem(currentItem.id);
+    }, [username]);
+
+    // Handle menu click
+    const handleMenuClick = (id: string, page: string) => {
+        setActiveItem(id);
+        router.push(page);
+    };
 
     return (
         <div className={`${isOpen ? "w-64" : "w-17"} bg-gray-800 text-white transition-all duration-300 flex flex-col`}>
@@ -52,7 +57,7 @@ export default function SideBarStudent() {
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
                 {isOpen && (
                     <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                        {username}
+                        {username || "Loading..."}
                     </h2>
                 )}
                 <button
@@ -71,7 +76,7 @@ export default function SideBarStudent() {
                         return (
                             <li key={item.id}>
                                 <button
-                                    onClick={() => setActiveItem(item.id)}
+                                    onClick={() => handleMenuClick(item.id, item.page)}
                                     className={`w-full flex items-center px-3 py-3 rounded-lg transition-all duration-200 ${activeItem === item.id
                                         ? "bg-blue-600 text-white shadow-lg"
                                         : "text-gray-300 hover:bg-gray-700 hover:text-white"
