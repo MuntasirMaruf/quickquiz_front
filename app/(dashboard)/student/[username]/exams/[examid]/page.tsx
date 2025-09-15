@@ -22,6 +22,7 @@ type ExamItem = {
     duration: string;
     date: string;
     status: { id: number };
+    isExpired: boolean;
 };
 
 type QuestionItem = {
@@ -48,14 +49,36 @@ const ExamDetailsPage = ({ params }: PageProps) => {
     const { username, examid } = React.use(params);
     const router = useRouter();
 
-
     const [examQuestions, setexamQuestions] = useState<ExamQuestionItem[] | null>(null);
     const [questions, setQuestions] = useState<QuestionItem[]>([]);
     const [exam, setExam] = useState<ExamItem>()
+    const [empty, setEmpty] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [examDone, setExamDone] = useState(false);
 
     useEffect(() => {
         fetchExamQuestions();
+        fetchAnswers();
     }, []);
+
+    async function fetchAnswers() {
+        try {
+            const res = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/answer_ssc/answers`,
+                { username, examid },
+                { withCredentials: true }
+            );
+
+            if (Array.isArray(res.data) && res.data.length > 0) {
+                setExamDone(true);
+            } else {
+                setExamDone(false);
+            }
+        } catch (error) {
+            console.error("Error fetching answers:", error);
+            setExamDone(false);
+        }
+    }
 
     async function fetchExamQuestions() {
         try {
@@ -79,21 +102,41 @@ const ExamDetailsPage = ({ params }: PageProps) => {
         }
     }
 
-    async function fetchExam(id: (string | number)) {
+    async function fetchExam(id: string | number) {
         try {
             const response = await axios.get(
                 `${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/get/exam/${id}`
             );
-            const data: ExamItem = response.data;
-            setExam(data)
 
+            const exam = response.data;
+            // Parse the time string (e.g., "10:30 AM")
+            const [timePart, meridiem] = exam.time.split(" ");
+            let [hours, minutes] = timePart.split(":").map(Number);
+
+            if (meridiem.toUpperCase() === "PM" && hours !== 12) hours += 12;
+            if (meridiem.toUpperCase() === "AM" && hours === 12) hours = 0;
+
+            const examDateTime = new Date(exam.date);
+            examDateTime.setHours(hours, minutes, 0, 0);
+
+            exam.isExpired = new Date() > examDateTime;
+
+            setExam(exam);
         } catch (error) {
             console.error(error);
         }
     }
 
+
     async function fetchQuestionsDetails(questionIds: (string | number)[]) {
         try {
+            if (questionIds.length === 0) {
+                setQuestions([]);
+                setEmpty(true);
+                setLoading(false);
+                return;
+            }
+
             const responses = await Promise.all(
                 questionIds.map(id =>
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/get/question/${id}`)
@@ -102,8 +145,12 @@ const ExamDetailsPage = ({ params }: PageProps) => {
 
             const dataQ: QuestionItem[] = responses.map(res => res.data);
             setQuestions(dataQ);
+            setEmpty(dataQ.length === 0);
         } catch (error) {
             console.error(error);
+            setEmpty(true);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -158,9 +205,7 @@ const ExamDetailsPage = ({ params }: PageProps) => {
 
     return (
         <div className="flex justify-center bg-gray-100 min-h-screen p-4">
-            <div className="w-full max-w-10xl space-y-6">
-
-                {/* Header Section */}
+            <div className="w-full max-w-10xl space-y-4">
                 <div className="bg-gray-800 text-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <button
                         onClick={() => router.back()}
@@ -169,7 +214,6 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                         Back
                     </button>
 
-                    {/* Exam Info */}
                     <div className="bg-gray-900 rounded-lg shadow-inner px-4 py-2 flex flex-wrap gap-6 justify-between flex-1">
                         <p><span className="font-semibold text-gray-300">Id:</span> {examid}</p>
                         <p><span className="font-semibold text-gray-300">Name:</span> {exam?.name}</p>
@@ -179,23 +223,48 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                         <p><span className="font-semibold text-gray-300">Duration:</span> {exam?.duration} Minutes</p>
                     </div>
 
-                    <Link
-                        href={`/student/${username}/exams/${examid}/start`}
-                        className="flex items-center px-4 py-2 bg-blue-700 rounded-lg hover:bg-gray-700 transition-colors"
-                    >
-                        Start
-                    </Link>
-                </div>
-
-                {/* Questions Section */}
-                <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-h-[78vh] overflow-y-auto">
-                    {questions.length > 0 ? (
-                        printArray(questions)
+                    {loading ? (
+                        <button
+                            disabled
+                            className="bg-gray-500 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed"
+                        >
+                            Loading...
+                        </button>
+                    ) : exam?.isExpired || empty ? (
+                        <button
+                            disabled
+                            className="bg-red-500 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed"
+                        >
+                            {exam?.isExpired ? "Expired" : "No Questions"}
+                        </button>
+                    ) : examDone ? (
+                        <Link
+                            href='#'
+                            className="flex items-center px-4 py-2 bg-gray-600 rounded-lg"
+                        >
+                            Completed
+                        </Link>
                     ) : (
-                        <p className="text-gray-500 text-center italic">No questions found for this exam.</p>
+                        <Link
+                            href={`/student/${username}/exams/${examid}/start`}
+                            className="flex items-center px-4 py-2 bg-blue-700 rounded-lg hover:bg-gray-700 transition-colors"
+                        >
+                            Start
+                        </Link>
                     )}
                 </div>
 
+                <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-h-[79vh] overflow-y-auto">
+                    {loading ? (
+                        <p className="text-gray-400 text-center italic">Loading questions...</p>
+                    ) : questions.length > 0 ? (
+                        printArray(questions)
+                    ) : (
+                        <p className="text-gray-500 text-center italic">
+                            No questions found for this exam.
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );

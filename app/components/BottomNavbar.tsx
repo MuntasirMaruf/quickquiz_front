@@ -4,7 +4,7 @@ export default function BottomNavbar() {
     return (
         <footer className="bg-gray-900">
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center p-4 text-gray-100">
-                <p>&copy; 2025 Your Company. All rights reserved.</p>
+                <p>&copy; 2025 QuickQuiz. All rights reserved.</p>
                 <nav className="flex space-x-4 mt-2 md:mt-0">
                     <Link href="/privacy" className="hover:text-gray-900 transition">
                         Privacy Policy

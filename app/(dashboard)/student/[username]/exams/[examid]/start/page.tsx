@@ -9,6 +9,7 @@ type PageProps = {
 };
 
 type ExamQuestionItem = {
+    id: number;
     exam_ssc: { id: number };
     question_cq_ssc: { id: number }
 };
@@ -44,6 +45,12 @@ type QuestionItem = {
     status: { id: number };
 };
 
+declare global {
+    interface Window {
+        PusherPushNotifications: any;
+    }
+}
+
 const StartExamPage = ({ params }: PageProps) => {
     const { username, examid } = React.use(params);
     const router = useRouter();
@@ -52,26 +59,59 @@ const StartExamPage = ({ params }: PageProps) => {
     const [questions, setQuestions] = useState<QuestionItem[]>([]);
     const [exam, setExam] = useState<ExamItem>();
     const [answers, setAnswers] = useState<Record<string, string>>({});
+    const [loading, setLoading] = useState(true);
+
+    const [studentId, setStudentId] = useState();
 
     useEffect(() => {
         fetchExamQuestions();
+        fetchStudent();
+    }, []);
+
+    useEffect(() => {
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker
+                .register('/service-worker.js')
+                .then(() => console.log('✅ Service Worker registered'));
+        }
+
+        // Subscribe to Pusher Beams
+        const subscribe = async () => {
+            if (window.PusherPushNotifications) {
+                const beamsClient = new window.PusherPushNotifications.Client({
+                    instanceId: '6f217e32-50af-477f-a270-2eda58db0fab',
+                });
+
+                try {
+                    await beamsClient.start();
+                    await beamsClient.addDeviceInterest('hello');
+                    console.log('✅ Subscribed to hello interest');
+                } catch (err) {
+                    console.error('❌ Subscription failed:', err);
+                }
+            }
+        };
+
+        subscribe();
     }, []);
 
     const [timeLeft, setTimeLeft] = useState({ minutes: 0, seconds: 0 });
 
     useEffect(() => {
-        if (!exam?.duration) return;
-        setTimeLeft({ minutes: 180, seconds: 0 })
+        if (!exam?.duration || questions.length === 0) return; // Don't start timer if no questions
 
         const totalMinutes = Number(exam.duration); // duration in minutes
         const examEndTime = Date.now() + totalMinutes * 60 * 1000;
+
+        setTimeLeft({ minutes: totalMinutes, seconds: 0 });
 
         const interval = setInterval(() => {
             const diff = examEndTime - Date.now();
             if (diff <= 0) {
                 clearInterval(interval);
                 setTimeLeft({ minutes: 0, seconds: 0 });
-                alert("⏰ Time is up! Your answers will be submitted automatically.");
+                alert("Time is up! Your answers will be submitted automatically.");
 
                 // Auto-submit answers
                 handleSubmitAuto();
@@ -84,16 +124,47 @@ const StartExamPage = ({ params }: PageProps) => {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [exam?.duration]);
+    }, [exam?.duration, questions.length]);
+
 
     const handleSubmitAuto = async () => {
-        try {
+        if (!examQuestions || examQuestions.length === 0) return;
 
-            alert("✅ Your answers have been submitted!");
-            router.push(`/student/${username}/exams`);
+        try {
+            for (let i = 0; i < examQuestions.length; i++) {
+                const q = examQuestions[i];
+
+                const payload = {
+                    answer_1: answers[`q${i}_1`] || "",
+                    answer_2: answers[`q${i}_2`] || "",
+                    answer_3: answers[`q${i}_3`] || "",
+                    answer_4: answers[`q${i}_4`] || "",
+                    exam_question_id: q.id,
+                    exam_id: examid,
+                    student_id: studentId,
+                    teacher_id: null,
+                };
+
+                await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/answer_ssc/create`,
+                    payload,
+                    { withCredentials: true }
+                );
+            }
+            router.back();
         } catch (error) {
             console.error(error);
-            alert("❌ Failed to submit answers automatically. Please try manually.");
+            alert("Something went wrong while submitting answers.");
+        }
+
+        try {
+            const { data } = await axios.post('http://localhost:3000/notifications/send', {
+                interest: 'hello',
+                title: 'Exam Completion',
+                message: 'Congratulations on completeing another exam!',
+            });
+        } catch (err: any) {
+            console.error(err);
         }
     };
 
@@ -117,6 +188,21 @@ const StartExamPage = ({ params }: PageProps) => {
         }
     }
 
+    async function fetchStudent() {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_URL}/student/retrieve/${username}`,
+                {
+                    withCredentials: true
+                }
+            );
+            setStudentId(response.data.id)
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
     async function fetchExam(id: (string | number)) {
         try {
             const response = await axios.get(
@@ -130,14 +216,24 @@ const StartExamPage = ({ params }: PageProps) => {
 
     async function fetchQuestionsDetails(questionIds: (string | number)[]) {
         try {
+            if (questionIds.length === 0) {
+                setQuestions([]);
+                setLoading(false);
+                return;
+            }
+
             const responses = await Promise.all(
                 questionIds.map(id =>
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/get/question/${id}`)
                 )
             );
-            setQuestions(responses.map(res => res.data));
+
+            const dataQ: QuestionItem[] = responses.map(res => res.data);
+            setQuestions(dataQ);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -236,9 +332,8 @@ const StartExamPage = ({ params }: PageProps) => {
 
     return (
         <div className="flex justify-center bg-gray-100 min-h-screen p-4">
-            <div className="w-full max-w-10xl space-y-6">
+            <div className="w-full max-w-10xl space-y-4">
 
-                {/* Header Section */}
                 <div className="bg-gray-800 text-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <button
                         onClick={() => router.back()}
@@ -263,16 +358,18 @@ const StartExamPage = ({ params }: PageProps) => {
                     )}
                 </div>
 
-                {/* Questions Section */}
                 <form onSubmit={handleSubmit}>
-                    <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-h-[78vh] overflow-y-auto">
-                        {questions.length > 0 ? (
+                    <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-h-[79vh] overflow-y-auto">
+                        {loading ? (
+                            <p className="text-gray-400 text-center italic">Loading questions...</p>
+                        ) : questions.length > 0 ? (
                             printArray(questions)
                         ) : (
-                            <p className="text-gray-500 text-center italic">No questions found for this exam.</p>
+                            <p className="text-gray-500 text-center italic">
+                                No questions found for this exam.
+                            </p>
                         )}
 
-                        {/* Submit Button */}
                         {questions.length > 0 && (
                             <div className="flex justify-center mt-6">
                                 <button
