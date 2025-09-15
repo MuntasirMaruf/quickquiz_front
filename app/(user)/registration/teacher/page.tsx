@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Button from "@/app/components/teacher/Button";
 
 export default function RegistrationPage() {
     const router = useRouter();
@@ -20,7 +21,7 @@ export default function RegistrationPage() {
     const [salary, setSalary] = useState<string>("");
 
     const [error, setError] = useState("");
-    //const [submitting, setSubmitting] = useState(false);
+    
 
     // 🔎 validation 
     const validate = () => {
@@ -82,17 +83,18 @@ export default function RegistrationPage() {
         try {
             const data = {
                 username: username,
-                fullname: fullName,
+                fullName: fullName,
                 email: email,
                 phone_number: phoneNumber,
                 date_of_birth: dateOfBirth,
                 gender: gender,
                 address: address,
-                password: password
+                password: password,
+                salary:salary
 
             }
             const res = await axios.post(
-                `http://localhost:3000/teacher/register`,
+                'http://localhost:3000/teacher/register',
                 data
             );
             alert("Registration successful");
@@ -108,7 +110,7 @@ export default function RegistrationPage() {
             }
         }
         router.push("/login");
-        //setSubmitting(false);
+       
     };
 
     return (
@@ -205,12 +207,7 @@ export default function RegistrationPage() {
                     className="w-full border p-2 mb-2"
                 />
 
-                <button className="w-full border p-2 mt-2 rounded"
-                    type="submit"
-
-                >Register
-
-                </button>
+                <Button type="submit">Register</Button>
 
             </form>
         </div>

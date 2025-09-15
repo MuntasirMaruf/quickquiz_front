@@ -55,11 +55,12 @@ const AssignExamsPage = ({ params }: PageProps) => {
     const printArray = (jsonData: ExamItem[]) => {
         return jsonData.map((item, index) => {
             return (
+
                 <div
                     key={index}
                     className="mb-4 p-6 bg-gray-700 rounded-xl shadow-lg text-white flex justify-between items-center"
                 >
-                    {/* Info Section */}
+                    Info Section
                     <div className="flex justify-between w-200">
                         <div>
                             <p><span className="text-gray-300">ID:</span> {item.id}</p>
@@ -89,6 +90,7 @@ const AssignExamsPage = ({ params }: PageProps) => {
                     </Link>
 
                 </div>
+
             );
         });
     };
