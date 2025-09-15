@@ -64,8 +64,4 @@
 
 </html>
 
-<!-- Invoke-RestMethod -Uri
-"https://6f217e32-50af-477f-a270-2eda58db0fab.pushnotifications.pusher.com/publish_api/v1/instances/6f217e32-50af-477f-a270-2eda58db0fab/publishes"
--Method Post -Headers @{"Content-Type"="application/json"; "Authorization"="Bearer
-927FAC76F7E7D858265599685E2DC36DEA8339B35D6CBCFAA655932D4B44E913"} -Body
-'{"interests":["hello"],"web":{"notification":{"title":"Hello","body":"Hello, world!"}}}' -->
+<!-- curl -X POST "https://6f217se32-50af-477f-a270-2eda58db0fab.pushnotifications.pusher.com/publish_api/v1/instances/6f217e32-50af-477f-a270-2eda58db0fab/publishes" -H "Content-Type: application/json" -H "Authorization: Bearer 927FAC76F7E7D858265599685E2DC36DEA8339B35D6CBCFAA655932D4B44E913" -d "{\"interests\":[\"hello\"],\"web\":{\"notification\":{\"title\":\"Hello\",\"body\":\"Hello, world!\"}}}" -->

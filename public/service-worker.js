@@ -1,19 +1,18 @@
 // public/service-worker.js
-importScripts("https://js.pusher.com/beams/service-worker.js");
 
-// Optional: Add custom notification click handling
-self.addEventListener('notificationclick', (event) => {
+importScripts('https://js.pusher.com/beams/service-worker.js');
+
+// Optional: Listen to notification click events
+self.addEventListener('notificationclick', function (event) {
+    console.log('On notification click: ', event.notification);
     event.notification.close();
-
-    // Handle notification click - open specific page
-    if (event.notification.data && event.notification.data.url) {
-        event.waitUntil(
-            clients.openWindow(event.notification.data.url)
-        );
-    } else {
-        // Default: open the app
-        event.waitUntil(
-            clients.openWindow('/')
-        );
-    }
+    // Focus or open your app
+    event.waitUntil(
+        clients.matchAll({ type: 'window' }).then(clientList => {
+            for (const client of clientList) {
+                if (client.url === '/' && 'focus' in client) return client.focus();
+            }
+            if (clients.openWindow) return clients.openWindow('/');
+        })
+    );
 });

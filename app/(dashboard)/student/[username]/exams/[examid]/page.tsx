@@ -108,7 +108,7 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                 `${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/get/exam/${id}`
             );
 
-            const exam = response.data; // ✅ single object
+            const exam = response.data;
             // Parse the time string (e.g., "10:30 AM")
             const [timePart, meridiem] = exam.time.split(" ");
             let [hours, minutes] = timePart.split(":").map(Number);
@@ -121,7 +121,7 @@ const ExamDetailsPage = ({ params }: PageProps) => {
 
             exam.isExpired = new Date() > examDateTime;
 
-            setExam(exam); // ✅ directly set single object
+            setExam(exam);
         } catch (error) {
             console.error(error);
         }
@@ -240,9 +240,9 @@ const ExamDetailsPage = ({ params }: PageProps) => {
                     ) : examDone ? (
                         <Link
                             href='#'
-                            className="flex items-center px-4 py-2 bg-gray-700 rounded-lg"
+                            className="flex items-center px-4 py-2 bg-gray-600 rounded-lg"
                         >
-                            Done
+                            Completed
                         </Link>
                     ) : (
                         <Link

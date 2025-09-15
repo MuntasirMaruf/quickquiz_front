@@ -51,7 +51,7 @@ export default function StudentLoginPage() {
                 alert(res.data.message);
             }
         } catch (err) {
-            alert('Login failed ' + err);
+            alert('Login failed. Invalid uername or password');
         }
     };
 

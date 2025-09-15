@@ -30,7 +30,9 @@ export default function ExamsList({ username, exams }: { username: string; exams
                     { username, examid: exam.id },
                     { withCredentials: true }
                 );
-                setExamDoneMap((prev) => ({ ...prev, [exam.id]: Array.isArray(res.data) && res.data.length > 0 }));
+                // { ...prev } spread operator: copies all existing key-value pairs from the previous state into a new
+                // updates the property in the object with key exam.id.
+                setExamDoneMap((prev) => ({ ...prev, [exam.id]: Array.isArray(res.data) && res.data.length > 0 })); // { 1: true, 2: false, 3: true }
             } catch (error) {
                 console.error(`Error fetching answers for exam ${exam.id}:`, error);
                 setExamDoneMap((prev) => ({ ...prev, [exam.id]: false }));
@@ -102,35 +104,37 @@ export default function ExamsList({ username, exams }: { username: string; exams
                                 </div>
 
                                 <div className="flex flex-col justify-between py-2">
-                                    <Link
-                                        className="bg-green-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow flex justify-center"
-                                        href={`/student/${username}/exams/${item.id}`}
-                                    >
-                                        Details
-                                    </Link>
-
-                                    {item.isExpired ? (
-                                        <button
-                                            disabled
-                                            className="bg-red-500 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed"
-                                        >
-                                            Expired
-                                        </button>
-                                    ) : done ? (
-                                        <button
-                                            disabled
-                                            className="bg-gray-700 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed"
-                                        >
-                                            Done
-                                        </button>
-                                    ) : (
+                                    <div className="flex flex-col space-y-5 w-30">
                                         <Link
-                                            className="bg-blue-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow flex justify-center"
-                                            href={`/student/${username}/exams/${item.id}/start`}
+                                            className="bg-green-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow flex justify-center w-full"
+                                            href={`/student/${username}/exams/${item.id}`}
                                         >
-                                            Start
+                                            Details
                                         </Link>
-                                    )}
+
+                                        {item.isExpired ? (
+                                            <button
+                                                disabled
+                                                className="bg-red-500 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed w-full"
+                                            >
+                                                Expired
+                                            </button>
+                                        ) : done ? (
+                                            <button
+                                                disabled
+                                                className="bg-gray-600 opacity-60 text-white px-4 py-2 rounded-lg shadow flex justify-center cursor-not-allowed w-full"
+                                            >
+                                                Completed
+                                            </button>
+                                        ) : (
+                                            <Link
+                                                className="bg-blue-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow flex justify-center w-full"
+                                                href={`/student/${username}/exams/${item.id}/start`}
+                                            >
+                                                Start
+                                            </Link>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         );

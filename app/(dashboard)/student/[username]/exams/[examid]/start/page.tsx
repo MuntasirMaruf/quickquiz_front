@@ -45,6 +45,12 @@ type QuestionItem = {
     status: { id: number };
 };
 
+declare global {
+    interface Window {
+        PusherPushNotifications: any;
+    }
+}
+
 const StartExamPage = ({ params }: PageProps) => {
     const { username, examid } = React.use(params);
     const router = useRouter();
@@ -60,6 +66,34 @@ const StartExamPage = ({ params }: PageProps) => {
     useEffect(() => {
         fetchExamQuestions();
         fetchStudent();
+    }, []);
+
+    useEffect(() => {
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker
+                .register('/service-worker.js')
+                .then(() => console.log('✅ Service Worker registered'));
+        }
+
+        // Subscribe to Pusher Beams
+        const subscribe = async () => {
+            if (window.PusherPushNotifications) {
+                const beamsClient = new window.PusherPushNotifications.Client({
+                    instanceId: '6f217e32-50af-477f-a270-2eda58db0fab',
+                });
+
+                try {
+                    await beamsClient.start();
+                    await beamsClient.addDeviceInterest('hello');
+                    console.log('✅ Subscribed to hello interest');
+                } catch (err) {
+                    console.error('❌ Subscription failed:', err);
+                }
+            }
+        };
+
+        subscribe();
     }, []);
 
     const [timeLeft, setTimeLeft] = useState({ minutes: 0, seconds: 0 });
@@ -117,15 +151,22 @@ const StartExamPage = ({ params }: PageProps) => {
                     { withCredentials: true }
                 );
             }
-
-            alert("All answers saved successfully!");
             router.back();
         } catch (error) {
             console.error(error);
             alert("Something went wrong while submitting answers.");
         }
-    };
 
+        try {
+            const { data } = await axios.post('http://localhost:3000/notifications/send', {
+                interest: 'hello',
+                title: 'Exam Completion',
+                message: 'Congratulations on completeing another exam!',
+            });
+        } catch (err: any) {
+            console.error(err);
+        }
+    };
 
 
     async function fetchExamQuestions() {

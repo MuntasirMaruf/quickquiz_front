@@ -70,7 +70,6 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
             setEnrolldedProgram(data?.program.id || 0);
             setPassword('');
 
-            // ✅ Load profile picture directly when data.id is available
             if (data.id) {
                 setProfilePic(`${process.env.NEXT_PUBLIC_API_URL}/student/profile/get_dp/${data.id}`);
             }
@@ -235,11 +234,25 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
 
     const router = useRouter();
     const handleLogout = async () => {
-        await axios.post('http://localhost:3000/auth/logout', {}, { withCredentials: true });
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {}, { withCredentials: true });
         router.push('/login/student');
     };
 
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/student/remove/${username}`, { withCredentials: true });
+            router.push('/login/student');
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            if (axios.isAxiosError(error)) {
+                const errorMessage = error.response?.data?.message || error.message;
+                alert("Update failed: " + errorMessage);
+            } else {
+                alert("Something went wrong! Please try again.");
+            }
+        }
 
+    };
 
     const handleUpdatePicture = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -258,7 +271,6 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                 }
             );
 
-            // ✅ Refresh image after updating (bypass cache with timestamp)
             setProfilePic(`${process.env.NEXT_PUBLIC_API_URL}/student/profile/get_dp/${id}?t=${Date.now()}`);
             setPreview(null);
             setProfilePicFile(null);
@@ -438,9 +450,16 @@ const ProfilePage = ({ params }: ProfilePageProps) => {
                             <button
                                 onClick={handleLogout}
                                 type="button"
-                                className="px-8 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition"
+                                className="px-8 py-2 bg-red-400 text-white rounded-lg shadow hover:bg-red-700 transition"
                             >
                                 Logout
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                type="button"
+                                className="px-8 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition"
+                            >
+                                Delete
                             </button>
                         </div>
                     </form>
