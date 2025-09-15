@@ -47,7 +47,7 @@ export default function NotificationTest() {
                 title: 'Test Notification!',
                 message: 'Notification sent successfully.',
             });
-            // alert(`Notification sent. Publish ID: ${res.data.publishId}`);
+            alert(`Notification sent. Publish ID: ${res.data.publishId}`);
         } catch (err) {
             console.error(err);
             alert('Failed to send notification');

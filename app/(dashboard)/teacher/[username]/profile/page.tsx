@@ -55,6 +55,7 @@ export default function Page() {
 
   const handleDelete = async () => {
     try {
+      alert(id)
       const base = process.env.NEXT_PUBLIC_API_URL;
       const res = await axios.delete(`${base}/teacher/delete/${id}`);
       alert("deleted")
