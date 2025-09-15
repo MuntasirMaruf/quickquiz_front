@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 const SettingsPage = () => {
@@ -7,7 +8,9 @@ const SettingsPage = () => {
                 <div className="bg-white rounded-lg shadow-lg p-8">
                     <div className="bg-gray-50 rounded-lg p-6">
                         <p className="text-gray-600 mb-4">This is Settings Page</p>
-
+                        <Link href={`/teacher/assign_exams`} className="">
+                            Assign Exams yourself.
+                        </Link>
                     </div>
                 </div>
             </div>
