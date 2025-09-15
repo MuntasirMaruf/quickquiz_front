@@ -345,7 +345,7 @@ const AdminRegistration = () => {
                         </label>
                     </div>
 
-                    <div className="flex items-center space-x-3">
+                    {/* <div className="flex items-center space-x-3">
                         <input
                             id="gender_other"
                             name="gender"
@@ -358,7 +358,7 @@ const AdminRegistration = () => {
                         <label htmlFor="gender_other" className="text-gray-400 cursor-pointer">
                             Others
                         </label>
-                    </div>
+                    </div> */}
                 </div>
                 {genderError && <p className="text-red-500">{genderError}</p>}
 
