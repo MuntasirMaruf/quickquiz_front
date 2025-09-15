@@ -114,6 +114,16 @@ const QuestionsPage = ({ params }: PageProps) => {
                 await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/exam_question_ssc/create/exam_question`, data);
             }
             alert("Questions added successfully!");
+            try {
+                const res = await axios.post('http://localhost:3000/notifications/send', {
+                    interest: 'hello',
+                    title: 'New exam assigned!',
+                    message: 'Teacher has assigned a new exam. Check it out!',
+                });
+            } catch (err) {
+                console.error(err);
+                alert('Failed to send notification');
+            }
             setSelectedQuestions([]);
             fetchAssignedQuestions();
         } catch (err) {
