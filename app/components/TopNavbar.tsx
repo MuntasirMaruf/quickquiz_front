@@ -1,9 +1,9 @@
+"use client";
 import Link from "next/link";
 import BackButton from "./BackButton";
 import AppName from "./AppName";
 
 export default function TopNavbar() {
-
     return (
         <header className="bg-gray-900 text-white shadow-lg">
             <div className="max-w-10xl mx-auto flex justify-between items-center px-6 py-5">
@@ -14,6 +14,7 @@ export default function TopNavbar() {
 
                 {/* Right section (Nav links) */}
                 <nav className="flex items-center space-x-6">
+
                     <Link
                         href="/"
                         className="hover:text-yellow-400 transition-colors font-medium"
