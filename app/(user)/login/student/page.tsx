@@ -8,8 +8,8 @@ import { Eye, EyeOff } from 'lucide-react';
 
 
 export default function StudentLoginPage() {
-    const [username, setUsername] = useState('Maruf');
-    const [password, setPassword] = useState('Pa$$w0rd!123');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string>('');
     const router = useRouter();

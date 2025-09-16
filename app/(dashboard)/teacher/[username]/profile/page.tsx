@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter ,useParams} from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import Button from "@/app/components/teacher/Button";
 
 export default function Page() {
   const router = useRouter();
-  const { username } = useParams<{ username: string }>(); 
+  const { username } = useParams<{ username: string }>();
 
-  
+
   if (!username) return null;
 
   // state
@@ -52,6 +52,20 @@ export default function Page() {
 
     fetchData();
   }, [username]);
+
+  const handleDelete = async () => {
+    try {
+      alert(id)
+      const base = process.env.NEXT_PUBLIC_API_URL;
+      const res = await axios.delete(`${base}/teacher/delete/${id}`);
+      alert("deleted")
+      router.push("/login/teacher");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load teacher data.");
+    }
+  };
+
 
   // validation
   const validate = () => {
@@ -242,6 +256,9 @@ export default function Page() {
           <Button type="submit">{id ? "Update" : "Register"}</Button>
         </div>
       </form>
+      <div className="flex gap-2">
+        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded" onClick={() => handleDelete()}>Delete</button>
+      </div>
     </div>
   );
 }

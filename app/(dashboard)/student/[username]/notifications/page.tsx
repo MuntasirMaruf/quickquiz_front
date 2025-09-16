@@ -45,7 +45,7 @@ export default function NotificationTest() {
             const res = await axios.post('http://localhost:3000/notifications/send', {
                 interest: 'hello',
                 title: 'Test Notification!',
-                message: 'Congratulations! You have successfully sent notification.',
+                message: 'Notification sent successfully.',
             });
             alert(`Notification sent. Publish ID: ${res.data.publishId}`);
         } catch (err) {
