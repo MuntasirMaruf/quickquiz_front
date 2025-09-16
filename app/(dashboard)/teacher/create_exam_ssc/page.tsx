@@ -4,12 +4,12 @@ import axios from 'axios';
 import React, { useState } from 'react'
 
 const page = () => {
-
-    const[category, setCategory] = useState("");
-    const[subject, setSubject] = useState("");
-    const[marks, setMarks] = useState("");
-    const[duration, setDuration] = useState("");
-    const[date, setDate] = useState("");
+    const [name, setName] = useState("");
+    const [category, setCategory] = useState("");
+    const [subject, setSubject] = useState("");
+    const [marks, setMarks] = useState("");
+    const [duration, setDuration] = useState("");
+    const [date, setDate] = useState("");
     const [time, setTime] = useState("");
 
 
@@ -18,6 +18,7 @@ const page = () => {
         e.preventDefault();
         try {
             const data = {
+                name: name,
                 category: category,
                 subject: subject,
                 marks: marks,
@@ -44,10 +45,20 @@ const page = () => {
         }
     }
 
-  return (
-     <div className="max-w-md mx-auto mt-6 border p-4 rounded">
-        <h1 className="text-xl font-semibold mb-4">Create Exam </h1>
+    return (
+        <div className="max-w-md mx-auto mt-6 border p-4 rounded">
+            <h1 className="text-xl font-semibold mb-4">Create Exam </h1>
             <form onSubmit={handleSubmit}>
+
+                <input
+                    name="name"
+
+                    placeholder="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full border p-2 mb-2"
+
+                />
                 {/* Dropdown for category */}
                 <select
                     name="category"
@@ -63,12 +74,12 @@ const page = () => {
                     <option value="Final Model Test">Final Model Test</option>
                 </select>
                 <select
-                     name="subject"
-                     value={subject}
-                     onChange={(e) => setSubject(e.target.value)}
-                     className="w-full border p-2 rounded"
-                      required
-                     >
+                    name="subject"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className="w-full border p-2 rounded"
+                    required
+                >
                     <option value="">Select Exam Subject</option>
                     <option value="Physics">Physics</option>
                     <option value="Math">Math</option>
@@ -76,7 +87,7 @@ const page = () => {
                 </select>
 
 
-              
+
 
                 <input
                     name="marks"
@@ -105,19 +116,19 @@ const page = () => {
                     className="w-full border p-2 mb-2"
                     required
                 />
-                
+
                 <input
-                   type="time"
-                   name="time"
-                   value={time}
-                   onChange={(e) => setTime(e.target.value)}
-                   className="w-full border p-2 mb-2"
-                   required
-                 />
-              <Button type="submit"> Register</Button>
+                    type="time"
+                    name="time"
+                    value={time}
+                    onChange={(e) => setTime(e.target.value)}
+                    className="w-full border p-2 mb-2"
+                    required
+                />
+                <Button type="submit"> Register</Button>
             </form>
         </div>
-  )
+    )
 }
 
 export default page
