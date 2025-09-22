@@ -12,7 +12,7 @@ interface Teacher {
   gender: string;
   salary: number;
   address: string;
-  display_picture?: string; // optional if exists
+  display_picture?: string; 
 }
 
 const ViewTeacherPage: React.FC = () => {

@@ -19,7 +19,7 @@ const AdminList = () => {
 
   const fetchAdmins = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/admin/getAdminsforup"); // ✅ Adjust endpoint
+      const res = await axios.get("http://localhost:3000/admin/getAdminsforup"); 
       setAdmins(res.data);
     } catch (err) {
       console.error("Failed to fetch admins:", err);

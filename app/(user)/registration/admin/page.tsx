@@ -192,7 +192,6 @@ const AdminRegistration = () => {
         formDataToSend.append('address', address);
         formDataToSend.append('password', password);
 
-        // Make sure field name matches backend
         if (profilePic) formDataToSend.append('profilePic', profilePic);
 
         const res = await axios.post(
@@ -304,7 +303,6 @@ const AdminRegistration = () => {
   value={dob}
   onChange={(e) => { 
     const value = e.target.value;
-    // Ensure format is YYYY-MM-DD
     const formatted = new Date(value).toISOString().split('T')[0];
     setDob(formatted);
   }}
@@ -379,7 +377,7 @@ const AdminRegistration = () => {
     </label>
         <input
           id="profilePic"
-          name="profilePic"      // <-- this is the important part
+          name="profilePic"    
           type="file"
           accept="image/*"
           onChange={(e) => {

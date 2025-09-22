@@ -32,7 +32,7 @@ const ViewAdminPage = () => {
     fetchAdmins();
   }, []);
 
-  // Check admin session every 30 seconds
+  // 30 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
