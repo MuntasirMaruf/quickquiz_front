@@ -57,13 +57,13 @@ const DashboardPage = () => {
     return () => clearInterval(interval);
   }, [router]);
 
-  // Logout
+  
   const handleLogout = () => {
     localStorage.removeItem("adminId");
     router.push("/login/admin");
   };
 
-  // Notification dropdown component
+
   const NotificationDropdown = () => (
     <div className="absolute right-0 mt-2 w-72 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 p-3">
       <h2 className="font-bold mb-2">📢 Notifications</h2>
